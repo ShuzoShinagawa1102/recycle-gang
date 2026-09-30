@@ -25,11 +25,11 @@ flutter run
 Requirements:
 
 - Java 22
-- Maven 3.6.3+
+- Gradle
 
 Run:
 
 ```bash
 cd backend
-mvn spring-boot:run
+gradle bootRun
 ```
