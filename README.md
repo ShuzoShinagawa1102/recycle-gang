@@ -1,17 +1,35 @@
-# recycle_gang
+# Recycle Gang
 
-A new Flutter project.
+Recycle Gang のアプリケーション・バックエンド・設計資料を管理するリポジトリです。
 
-## Getting Started
+## Repository structure
 
-This project is a starting point for a Flutter application.
+```text
+.
+├── flutter/   # Flutter application
+├── backend/   # Spring Boot backend
+├── doc/       # Architecture, business requirements, process, references, notes
+└── README.md
+```
 
-A few resources to get you started if this is your first Flutter project:
+## Flutter
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+```bash
+cd flutter
+flutter pub get
+flutter run
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Backend
+
+Requirements:
+
+- Java 22
+- Maven 3.6.3+
+
+Run:
+
+```bash
+cd backend
+mvn spring-boot:run
+```
