@@ -1,0 +1,63 @@
+# 記入用テンプレート。例示バージョンを本番公開済み情報として使わない。
+schema_version: 1
+release_id: null
+status: planned # planned / verified / partially_released / released / failed / cancelled
+created_at: null # ISO 8601 with timezone
+source:
+  repository: null
+  commit_sha: null
+  release_branch: null
+components:
+  backend:
+    version: null
+    tag: null
+    image_digest: null
+    build_run: null
+    config_hash: null
+  optimizer:
+    version: null
+    tag: null
+    commit_sha: null
+    image_digest: null
+    solver_config_version: null
+  consumer:
+    version: null
+    tag: null
+    builds: [] # [{platform: ios|android, build_number: ..., environment: ..., checksum: ...}]
+  backyard:
+    version: null
+    tag: null
+    commit_sha: null
+    builds: [] # web/iOS/Androidは別成果物。Webにはartifact_uri/checksumを記録
+contracts:
+  consumer: {api_major: null, artifact_version: null, checksum: null}
+  backyard: {api_major: null, artifact_version: null, checksum: null}
+  optimizer: {api_major: null, artifact_version: null, checksum: null}
+compatibility:
+  required_capabilities: []
+  tested_combinations: [] # 具体版の組合せと試験結果URL。将来版の動作を保証しない
+  minimum_supported_mobile_versions: {consumer: null, backyard: null}
+database:
+  from_version: null
+  target_version: null
+  migration_checksums: []
+  backfill_required: false
+  maintenance_resources: []
+  old_application_compatible: null
+  recovery_plan: null
+verification:
+  ci_runs: []
+  contract_results: []
+  migration_result: null
+  e2e_result: null
+  verified_artifact_checksums: []
+deployments: []
+# 各実行にenvironment/component/artifact_id/previous_artifact_id/started_at/completed_at/
+# operator/status/health_check/evidenceを記録。モバイルはupload/review/publishの段階を分ける。
+store_state:
+  ios: {consumer: null, backyard: null}
+  android: {consumer: null, backyard: null}
+rollback:
+  previous_release_record: null
+  procedure: null
+  result: null
