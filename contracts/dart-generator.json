@@ -1,0 +1,8 @@
+{
+  "pubName": "recycle_gang_api",
+  "pubVersion": "0.1.0",
+  "pubPublishTo": "none",
+  "serializationLibrary": "json_serializable",
+  "dateLibrary": "core",
+  "hideGenerationTimestamp": true
+}

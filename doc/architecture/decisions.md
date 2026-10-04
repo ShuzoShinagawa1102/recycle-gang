@@ -23,12 +23,12 @@
 | OPS-04 | 指定Push/PR条件、05:00 JSTにdevelop/mainの日次CI | マージ後と定期の回帰確認 |
 | OPS-05 | expand/contract、専用単一migration job | 旧新ECSタスク共存とDB変更を両立 |
 | QA-01 | 保証対象別試験と業務モジュール別の部分実行 | 必要な範囲を独立して検証 |
+| TECH-01 | JDK 21 LTS / Gradle 8.14.3 / Boot 3.5.16 / jOOQ 3.19.33 | v0.1でコンパイル、業務試験、SQL・API疎通を検証 |
 
 ## 選定・数値確定が必要な事項
 
 | ID | 項目 | 決める条件 |
 |---|---|---|
-| TECH-01 | JDK LTS版とGradle / Boot / jOOQの組合せ | Java 25 LTSを起点に互換性、エディション、サポート期間を検証 |
 | TECH-02 | Aurora PostgreSQLのエンジン版 | 東京の対応、JDBC/Flyway/jOOQ、dev auto-pause条件 |
 | TECH-03 | iOSのmacOSランナー | hosted macOSとCodeBuild Macの費用、頻度、署名、CodePipeline連携 |
 | TECH-04 | IdPとWebセッション管理 | PKCE、管理者MFA、ログアウト、token/cookie保持 |
@@ -38,9 +38,9 @@
 | TECH-08 | RTO/RPOと冗長化拡張 | writer/reader、ECSタスク、NATの停止影響・復元実測・予算 |
 | TECH-09 | AWSアカウント・ドメイン・リソース識別子 | dev/prodの配置と運用権限 |
 
-## 実装の順序
+## 開発単位
 
-1. 最初の予約フローに必要なQ-01〜Q-09の業務条件を確定する。
+1. 画面から利用者の目的を定義し、関係する業務条件を確定する。v0.1の持込・予約は[ユースケース](../business/use-cases-v0.1.md)を適用する。
 2. 依存の版、Wrapper、モジュール境界、OpenAPI生成を設定する。
 3. 予約をドメイン → Flyway → jOOQ → API → Flutterまで接続し、試験する。
 4. CIのトリガー、対象SHA、日次、成果物保管を構築する。

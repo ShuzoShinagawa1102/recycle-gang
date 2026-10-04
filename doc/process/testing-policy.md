@@ -23,7 +23,7 @@
 
 - JUnitタグをunit / integration / contract / migration / architectureに分類し、moduleも指定可能にする。
 - Gradleタスク：test、integrationTest、contractTest、migrationTest、architectureTest。モジュール指定例の目標は`-Pmodule=reservation`。タスク実装時に使えるコマンドをREADMEへ記載する。
-- Spring Modulithの`@ApplicationModuleTest`で対象と必要な依存だけを起動する。外部の決済/通知は制御可能な代替実装を使う。
+- 業務モジュールのパッケージごとに試験を配置し、Gradleの`--tests`で部分実行する。DB結合は`databaseTest`に分離し、専用スキーマで実行する。外部の決済/通知は制御可能な代替実装を使う。
 - Flutterはtest/widgetとintegration_test、Pythonはpytestの単体/solver/API分類を用意する。
 - 部分試験の成功は全体成功を意味しない。公開契約・共通要素・DB変更は関連モジュールも試験する。
 
@@ -54,7 +54,7 @@ DB結合は同種・対象メジャーのPostgreSQLをTestcontainers等で起動
 - 古いモバイルSDKが互換期間中のBEで動く。
 - Web更新時に旧HTML/資産キャッシュの組合せで壊れない。
 
-公式資料：[Spring Modulith試験](https://docs.spring.io/spring-modulith/reference/testing.html)。関連：[DB変更](../architecture/backend/database-change-policy.md)、[CI/CD](ci-cd-policy.md)。
+実行コマンド：[ローカル開発](local-development.md)。関連：[DB変更](../architecture/backend/database-change-policy.md)、[CI/CD](ci-cd-policy.md)。
 
 
 ## 管理者と最適化の結合試験

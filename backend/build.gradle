@@ -3,27 +3,60 @@ plugins {
     id 'org.springframework.boot' version '3.5.16'
     id 'io.spring.dependency-management' version '1.1.7'
 }
-
 group = 'com.recyclegang'
-version = '0.0.1-SNAPSHOT'
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(22)
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
+version = '0.1.0'
+ext['jooq.version'] = '3.19.33'
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+repositories { mavenCentral() }
+dependencyLocking { lockAllConfigurations() }
+configurations { jooqCodegen }
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql'
+    runtimeOnly 'org.postgresql:postgresql'
+    jooqCodegen 'org.jooq:jooq-codegen:3.19.33'
+    jooqCodegen 'org.jooq:jooq-meta-extensions:3.19.33'
+    jooqCodegen 'org.postgresql:postgresql'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
-tasks.named('test') {
-    useJUnitPlatform()
+sourceSets.main.java.srcDirs += ['generated/src/main/java', 'src/generated/java']
+// The checked-in jOOQ sources let a fresh checkout compile before starting PostgreSQL.
+// Regenerate against the Flyway-migrated local database; never edit generated classes.
+tasks.register('generateJooq', JavaExec) {
+    classpath = configurations.jooqCodegen
+    mainClass = 'org.jooq.codegen.GenerationTool'
+    doFirst {
+        def config = file('jooq.xml').text
+        ['DB_URL': System.getenv('DB_URL') ?: 'jdbc:postgresql://localhost:5432/recycle_gang',
+         'DB_USER': System.getenv('DB_USER') ?: 'recycle_gang',
+         'DB_PASSWORD': System.getenv('DB_PASSWORD') ?: 'local-recycle-only'].each { key, value ->
+            config = config.replace('@' + key + '@', groovy.xml.XmlUtil.escapeXml(value))
+        }
+        def output = layout.buildDirectory.file('jooq-config.xml').get().asFile
+        output.parentFile.mkdirs(); output.text = config
+        args output.absolutePath
+    }
+    environment 'DB_URL', System.getenv('DB_URL') ?: 'jdbc:postgresql://localhost:5432/recycle_gang'
+    environment 'DB_USER', System.getenv('DB_USER') ?: 'recycle_gang'
+    environment 'DB_PASSWORD', System.getenv('DB_PASSWORD') ?: 'local-recycle-only'
+}
+tasks.register('generateJooqFromDdl', JavaExec) {
+    description = 'Bootstrap only: parse schema DDL without connecting to a database.'
+    classpath = configurations.jooqCodegen
+    mainClass = 'org.jooq.codegen.GenerationTool'
+    args 'jooq-ddl.xml'
+}
+tasks.named('test') { useJUnitPlatform { excludeTags 'database' } }
+tasks.register('databaseTest', Test) {
+    description = 'Integration tests against an isolated PostgreSQL schema. Start local DB first.'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform { includeTags 'database' }
 }

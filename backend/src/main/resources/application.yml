@@ -1,3 +1,23 @@
 spring:
   application:
     name: recycle-gang-backend
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/recycle_gang}
+    username: ${DB_USER:recycle_gang}
+    password: ${DB_PASSWORD:local-recycle-only}
+  flyway:
+    locations: classpath:db/migration
+  jooq:
+    sql-dialect: POSTGRES
+  servlet:
+    multipart:
+      max-file-size: 8MB
+      max-request-size: 9MB
+server:
+  address: ${SERVER_ADDRESS:127.0.0.1}
+  port: ${SERVER_PORT:8080}
+  error:
+    include-message: never
+app:
+  cors-origins: ${CORS_ORIGINS:http://localhost:7357,http://127.0.0.1:7357}
+  ticket-key: ${TICKET_KEY:}

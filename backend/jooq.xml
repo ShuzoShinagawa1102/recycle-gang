@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.19.0.xsd">
+  <jdbc><driver>org.postgresql.Driver</driver><url>@DB_URL@</url><user>@DB_USER@</user><password>@DB_PASSWORD@</password></jdbc>
+  <generator>
+    <database><name>org.jooq.meta.postgres.PostgresDatabase</name><inputSchema>public</inputSchema><excludes>flyway_schema_history</excludes></database>
+    <generate><records>true</records><deprecated>false</deprecated><generatedAnnotation>false</generatedAnnotation><javaTimeTypes>true</javaTimeTypes></generate>
+    <target><packageName>com.recyclegang.backend.generated.jooq</packageName><directory>src/generated/java</directory><clean>true</clean></target>
+  </generator>
+</configuration>

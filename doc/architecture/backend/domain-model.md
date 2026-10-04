@@ -2,6 +2,52 @@
 
 予約、運行、業者、配車、経路計画、回収、決済を業務モジュールとする。以下のER形式の図は業務モデルの関係を表す。物理テーブルと外部キーはFlywayで定義し、クラスとの1対1対応を要求しない。
 
+
+## ユーザー業務の統合モデル v0.1
+
+```mermaid
+erDiagram
+  direction TB
+  Customer ||--o{ CustomerAddress : owns
+  Customer ||--o{ Reservation : books
+  Facility |o--o{ Reservation : receives
+  Reservation ||--|{ ReservationItem : contains
+  ItemType ||--o{ ReservationItem : prices
+  Reservation ||--o| EntryTicket : issues
+  Reservation ||--o| Admission : records
+  Reservation ||--o{ CompletionPhoto : proves
+  Reservation {
+    string id PK
+    string customerId FK
+    string mode
+    string status
+    datetime slotStart
+    datetime slotEnd
+    int amountYen
+    string paymentStatus
+  }
+  EntryTicket {
+    string reservationId PK
+    string tokenHash UK
+    string encryptedToken
+    datetime expiresAt
+  }
+  Admission {
+    string reservationId PK
+    string facilityId FK
+    string managerId
+    datetime admittedAt
+  }
+```
+
+`PICKUP`は利用者の住所へ回収に行く予約、`DROPOFF`は利用者自身が施設へ持ち込む予約である。住所・品目名・単価は予約時の値を保存する。施設と入場QRはDROPOFFだけが持つ。
+
+Reservationを整合性の中心に置き、入場・写真・完了を同じ予約行のロックで直列化する。EntryTicketとAdmissionは別の記録であり、QRの発行・表示だけでは入場にしない。完了記録はReservationのcompletedAtと写真で構成する。
+
+customerはプロフィールと住所、catalogは施設・回収品・受付枠、reservationは予約・入場・写真・持込完了を所有する。ローカル版の受付枠はアプリケーションで生成するテストカレンダー、決済状態はテスト決済である。運行枠・外部決済のモデルは以下の全体モデルで定義する。
+
+[持込の状態遷移・不変条件・ユースケース](../../business/use-cases-v0.1.md)
+
 ## モジュールと集約
 
 | モジュール | 主な集約・モデル | 守る業務 |

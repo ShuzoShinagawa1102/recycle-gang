@@ -1,16 +1,15 @@
-# 設計と実装の対応
+# v0.1の実装範囲
 
-確認日：2026-10-03。設計資料は採用アーキテクチャと配置規約を定義する。この一覧でコード・環境への反映状況を管理する。
-
-| 対象 | 実装状況 |
+| 対象 | 実装 |
 |---|---|
-| 基幹の骨組み | Spring Boot 3.5.16、Java toolchain 22、Gradle。Webと起動テストを配置 |
-| 利用者Flutterの骨組み | 既存flutter配下。Dart `^3.13.4`、Riverpod `^3.4.3`、go_router `^18.0.2`の依存指定 |
-| 業務モジュール・Flyway・jOOQ | 設計を定義。実装対象 |
-| OpenAPI YAML・生成SDK・契約試験 | 契約の所有・分割・最適化エンドポイントを定義。実装対象 |
-| backyardと管理者画面 | リポジトリ・文書を整備。Flutter実装対象 |
-| optimizer | リポジトリ・内部REST・計算制約を定義。Python実装対象 |
-| AWS / Terraform / CI/CD / macOS連携 | 構成・実行条件・手順を定義。環境構築対象 |
-| drawio | 提出原本を保存し、レビュー反映済みの3ページdrawioを配置。XML・接続・配置範囲を検証 |
+| ユーザーFlutter | ホーム、依頼方法、回収品、施設・地図リンク、日時、住所・都道府県、確認・完了、一覧・詳細、QR、写真・持込完了、下書き、プロフィール、料金・テスト決済履歴 |
+| 基幹 | Java 21 / Spring Boot 3.5.16。customer・catalog・reservationのモジュラーモノリス |
+| DB | PostgreSQL 16.15用Compose、Flyway DDL、local専用fixture、jOOQ 3.19.33の生成型 |
+| API | consumer / backyard / 共通型のOpenAPI、生成Spring interface/DTO、生成Dart Dio SDK |
+| QR入場 | 乱数トークン・暗号化保存・有効期限・施設認可・重複防止。ローカル管理人のカメラ/コード受付画面 |
+| モック | Dioの通信層で差替え。予約・プロフィール・写真を端末に保存。実APIと同じSDKを使用 |
+| ローカル実行 | DBだけDocker、BEとFlutterはホストで実行。Windows/WSL、Android、macOS/iOSの起動手順 |
 
-今回の変更対象は設計文書と提出図の保存。アプリコード、依存ファイル、AWS資源、公開状態は変更していない。
+v0.1はローカル利用を対象とする。外部IdP・実決済・プッシュ通知・業者による訪問回収実績・backyardアプリ本体・最適化・AWS公開は実行対象に含めない。お知らせとやることは予約状態から表示する。
+
+検証コマンドと環境差は[ローカル開発](local-development.md)および[検証記録](verification-v0.1.md)に記録する。定義を変更するときは、業務ルール・契約・SQL・コード・試験を同じ変更で更新する。

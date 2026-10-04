@@ -36,3 +36,9 @@
 | WAF | [Resource association](https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-associating-aws-resource.html) | CloudFrontへのWeb ACL関連付け |
 | CloudFront origin保護 | [Restrict ALB access](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html) | prefix list、秘密header、HTTPS |
 | ECR | [VPC endpoints](https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html) | image取得とS3経路 |
+
+## QR入場の設計根拠
+
+- [OWASP Session Management](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)：推測困難な識別子、漏えい時のなりすまし対策。
+- [OWASP Cryptographic Storage](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html)：暗号学的乱数・認証付き暗号・鍵管理。
+- [OWASP Forgot Password](https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html)：期限と一回性のあるトークン設計を入場用途に応用。QR固有の共通規格を主張するものではない。

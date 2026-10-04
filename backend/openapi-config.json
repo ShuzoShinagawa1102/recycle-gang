@@ -1,0 +1,13 @@
+{
+  "interfaceOnly": true,
+  "useSpringBoot3": true,
+  "useTags": true,
+  "skipDefaultInterface": true,
+  "openApiNullable": false,
+  "documentationProvider": "none",
+  "annotationLibrary": "none",
+  "apiPackage": "com.recyclegang.backend.generated.api",
+  "modelPackage": "com.recyclegang.backend.generated.model",
+  "dateLibrary": "java8",
+  "hideGenerationTimestamp": true
+}

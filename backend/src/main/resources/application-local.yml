@@ -1,0 +1,8 @@
+spring:
+  flyway:
+    locations: classpath:db/migration,classpath:db/local
+app:
+  # Local fixtures only. No authentication beans exist for a deployed profile.
+  consumer-token: ${LOCAL_CONSUMER_TOKEN:local-user-demo}
+  manager-token: ${LOCAL_MANAGER_TOKEN:local-manager-demo}
+  ticket-key: ${TICKET_KEY:bG9jYWwtZGVtby1rZXktMzItYnl0ZXMtb25seS0xMjM=}

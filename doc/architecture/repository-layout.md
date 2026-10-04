@@ -2,99 +2,71 @@
 
 以下を実装の配置規約とする。生成物は再生成で置き換え、手修正しない。
 
-## recycle-gang
+
+## recycle-gang v0.1
 
 ```text
 recycle-gang/
+├── compose.yaml                          # PostgreSQLだけを起動
 ├── backend/
+│   ├── gradlew / gradlew.bat
 │   ├── src/main/java/com/recyclegang/backend/
-│   │   ├── reservation/      # 予約
-│   │   ├── schedule/         # 地域・運行便・予約枠
-│   │   ├── partner/          # 業者・車両・稼働条件
-│   │   ├── dispatch/         # 募集・オファー・割当
-│   │   ├── planning/         # 計算ジョブ・候補・経路採用
-│   │   ├── collection/       # 回収・引渡し・SOS
-│   │   └── payment/          # 支払・返金・精算
-│   ├── src/main/resources/db/migration/
-│   ├── src/test/
-│   ├── db/
-│   │   ├── fixtures/         # 開発・試験専用データ
-│   │   └── maintenance/
-│   │       └── YYYY-MM-DD_purpose/
-│   │           ├── README.md
-│   │           ├── precheck.sql
-│   │           ├── apply.sql
-│   │           └── postcheck.sql
-│   └── build/generated/     # jOOQ・OpenAPI生成Java
+│   │   ├── customer/                     # プロフィール・住所
+│   │   ├── catalog/                      # 施設・品目・受付枠
+│   │   ├── reservation/                  # 予約・入場・写真・持込完了
+│   │   ├── configuration/                # DI・local認証
+│   │   └── shared/                       # 業務エラー・認証主体
+│   ├── src/main/resources/
+│   │   ├── db/migration/                 # Flyway DDL
+│   │   ├── db/local/                     # local専用fixture
+│   │   └── static/local/                 # 管理人の受付テスト画面
+│   ├── src/generated/java/               # jOOQ生成型
+│   ├── generated/src/main/java/          # OpenAPI生成interface・DTO
+│   └── src/test/                         # 状態・セキュリティ・DB結合
 ├── flutter/
 │   ├── lib/
-│   │   ├── app/              # 起動・ルーティング・認証
+│   │   ├── app/                          # 起動・テーマ・ルーター
+│   │   ├── core/                         # API・モック・下書き・共通UI
 │   │   └── features/
-│   │       └── reservations/
-│   │           ├── presentation/
-│   │           ├── application/
-│   │           └── data/
-│   ├── packages/consumer_api/
-│   ├── test/
-│   └── integration_test/
+│   │       ├── home/
+│   │       ├── booking/
+│   │       ├── activity/
+│   │       └── profile/
+│   ├── packages/recycle_gang_api/        # 生成Dart Dio SDK
+│   ├── test/                             # 画面フロー・モック契約
+│   └── tool/api_smoke.dart               # 実HTTPのSDK疎通
 ├── contracts/
-│   ├── openapi/
-│   │   ├── consumer.yaml
-│   │   ├── backyard.yaml
-│   │   ├── admin.yaml
-│   │   └── components/
-│   └── generator/            # 生成器・設定・取得版の固定
-├── infra/                    # Terraform、dev/prod別state
-├── ci/                       # buildspecと検証・配布スクリプト
+│   ├── openapi/                          # consumer・backyard・共通型
+│   └── templates/dart/                   # 生成器のmultipart対応
+├── scripts/generate-contracts.py
+├── ci/buildspec.yml                      # 検証と成果物保管。公開なし
 └── doc/
-    ├── business/
-    ├── architecture/
-    ├── process/
-    └── reference/
 ```
 
 ## 業務モジュールの内部
 
-`reservation`を例とする。同じ構造を各モジュールに適用し、必要なアダプターだけを置く。
-
 ```text
 reservation/
-├── ReservationFacade.java   # 他モジュールに公開する入口
-├── ReservationId.java
-├── ReservationChanged.java  # 公開する業務イベント
-├── domain/                   # 集約・値オブジェクト・業務ルール
-├── application/
-│   ├── command/              # 更新ユースケース
-│   ├── query/                # 参照ユースケース・表示用projection
-│   └── port/                 # repository・外部連携のインターフェース
-└── adapter/
-    ├── in/web/               # Controller・API DTO変換
-    └── out/
-        ├── persistence/      # jOOQとドメインの変換
-        └── integration/      # 外部サービス接続
+├── domain/                               # Booking・状態遷移
+├── application/                          # BookingService・repository port
+├── infrastructure/                       # jOOQ実装・QR暗号化
+└── presentation/                         # 生成APIの実装・DTO変換
 ```
 
 ```mermaid
 flowchart TD
-  W[Webアダプター] --> A[application]
-  A --> D[domain]
-  A --> P[application.port]
-  S[jOOQアダプター] -.->|実装| P
-  H[HTTPアダプター] -.->|実装| P
-  S --> D
-  H --> D
+  Web["presentation"] --> UseCase["application"]
+  UseCase --> Domain["domain"]
+  UseCase --> Port["repository port"]
+  SQL["infrastructure / jOOQ"] -.-> Port
+  SQL --> Domain
 ```
 
-矢印はコードの依存を表す。domainはSpring・jOOQ・HTTP・生成API DTOへ依存しない。DIでportにアダプターを接続する。
+domainはSpring・jOOQ・HTTP・生成DTOに依存しない。他モジュールへはapplicationの公開サービスを通す。他モジュールのrepositoryやinfrastructureを直接参照しない。更新トランザクションはapplicationで管理する。
 
-## モジュール境界
+生成JavaとDart SDKはコミットする。新規cloneの起動にコード生成環境を要求しない。再生成は契約・スキーマ変更時に実施する。
 
-- 他モジュールには公開facade・ID・イベントだけを見せる。内部domainやrepositoryを直接参照しない。
-- Spring Modulithのモジュール検出を設定し、生成コードと起動設定を業務モジュールから除外する。循環依存と内部参照をCIで検出する。
-- テーブルの更新は所有モジュールが担当する。横断参照SQLは明示したqueryアダプターに置き、参照テーブルを試験対象として記録する。
-- 同一DBで同時確定すべき変更は同期処理とトランザクションで結ぶ。外部HTTPはその外で実行する。
-- 業務変更による計画revision更新は同一トランザクションの同期イベント処理で行う。外部通知の配信保証には永続outboxを使う。
-- 共通化はID・時刻・エラー等に限定し、業務ロジックをsharedへ集約しない。
+運行・募集・配車・最適化・業者実績・実決済のモジュールは[ドメインモデル](backend/domain-model.md)に定義する。実行しない空フォルダや空クラスは作らない。
 
 ## recycle-gang-backyard
 

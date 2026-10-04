@@ -1,46 +1,58 @@
-# Recycle Gang
+# Recycle Gang v0.1
 
-Recycle Gang のアプリケーション・バックエンド・設計資料を管理するリポジトリです。
+ユーザー向けFlutterアプリとSpring Boot API。開発ブランチは `develop/v1`。
 
-## 設計・運用ドキュメント
+## まず画面を動かす
 
-- [開発・運用方針の入口](doc/architecture/development-baseline.md)：システム構成、設計の軸、読む順序。
-- [業務要件](doc/business/index.md)：業務ルールの正と未決事項。
-- [アーキテクチャ](doc/architecture/index.md)：DDD、API、DB、AWS構成。
-- [開発プロセス](doc/process/index.md)：試験、GitFlow、CI/CD、リリース手順。
-- [バックヤード](https://github.com/ShuzoShinagawa1102/recycle-gang-backyard)：業者Web/モバイル・管理者Web。
-- [最適化](https://github.com/ShuzoShinagawa1102/recycle-gang-optimizer)：Python/FastAPIの計算サービス。
+Flutter 3.47.6を使用する。モックは端末内に保存され、サーバーなしで予約・QR・写真・持込完了を操作できる。
 
-開発の基準ブランチは`develop/v1`です。[設計と実装の対応](doc/process/implementation-status.md)を分けて管理します。以下の実行手順は既存コードに対応します。
-
-## Repository structure
-
-```text
-.
-├── flutter/   # Flutter application
-├── backend/   # Spring Boot backend
-├── doc/       # Architecture, business requirements, process, references, notes
-└── README.md
-```
-
-## Flutter
-
-```bash
+```sh
 cd flutter
 flutter pub get
-flutter run
+flutter run -d chrome --web-port=7357 --dart-define=USE_MOCKS=true
 ```
 
-## Backend
+## 実APIで動かす
 
-Requirements:
+DBだけをWSL2のDockerで起動し、バックエンドとFlutterはWindows側で動かす。
 
-- Java 22
-- Gradle
+WSLのリポジトリルート：
 
-Run:
+```sh
+docker compose up -d --wait
+```
 
-```bash
+Windows PowerShell（JDK 21）：
+
+```powershell
 cd backend
-gradle bootRun
+.\gradlew.bat bootRun --args="--spring.profiles.active=local"
 ```
+
+別のPowerShell：
+
+```powershell
+cd flutter
+flutter pub get
+flutter run -d chrome --web-port=7357 --dart-define=USE_MOCKS=false --dart-define=API_BASE_URL=http://localhost:8080
+```
+
+施設受付：<http://localhost:8080/local/manager.html>。今日・東エリアの持込予約を作成し、ユーザー画面のQRを読み取るか、コードを貼り付けて入場を記録する。その後、ユーザー画面で写真を登録して「捨てました！」を押す。
+
+[初回セットアップ・Android/iOS・試験・停止コマンド](doc/process/local-development.md)
+
+## 実装の入口
+
+| 定義 | 正となるファイル |
+|---|---|
+| 画面遷移 | [drawio](doc/architecture/ui/recycle-gang-ui-prototype.drawio)、`flutter/lib/app/router.dart` |
+| 業務と状態遷移 | [ユースケース v0.1](doc/business/use-cases-v0.1.md)、`backend/.../reservation/domain/` |
+| 統合モデル | [ドメインモデル](doc/architecture/backend/domain-model.md) |
+| API契約・再生成 | [contracts](contracts/README.md) |
+| DB | `backend/src/main/resources/db/migration/` |
+| 構成・技術 | [フォルダ構成](doc/architecture/repository-layout.md)、[技術スタック](doc/architecture/technology-stack.md) |
+| 実装と検証 | [v0.1の実装範囲](doc/process/implementation-status.md) |
+
+施設・日時枠・金額はテストデータ。決済はテスト決済、認証はlocalプロファイル専用のデモ認証である。
+
+AWS、バックヤード本体、経路最適化の設計は[開発方針](doc/architecture/development-baseline.md)を参照。

@@ -5,8 +5,8 @@
 | 対象 | 技術 | 役割 |
 |---|---|---|
 | 基幹 | Java / Spring Boot / Gradle | 業務ユースケースとREST API |
-| モジュール | Spring Modulith | 境界検証と業務モジュール単位の結合試験 |
-| DB | Aurora PostgreSQL互換 Serverless v2 | 業務データ・ジョブ・履歴の永続化 |
+| モジュール | パッケージによるモジュラーモノリス / ArchUnit | domainの依存方向を検証し、業務モジュール単位で試験 |
+| DB | ローカル PostgreSQL 16.15 / AWS Aurora PostgreSQL互換 Serverless v2 | DBだけDocker。AWS構成はインフラ設計で管理 |
 | SQL | jOOQ / JDBC / Springトランザクション | 型付きSQLとドメインへの変換 |
 | DB変更 | Flyway | 版付きDDL・必須データ変更 |
 | API | REST / JSON / OpenAPI 3.0.3 | 提供者と利用者の契約 |
@@ -30,6 +30,10 @@ JDK・Gradle・Spring Boot・jOOQ・PostgreSQLは一組として互換性を検�
 
 Flutter SDK・Dart・生成器、Python・ソルバー・コンテナベースイメージも固定する。日次CIで依存を自動的に最新版へ置き換えない。更新は専用の変更として生成・ビルド・DB結合・契約試験を通す。
 
-JDKのLTS移行、ソルバー、地図・決済・通知・IdP、macOSランナーの選定条件は[意思決定記録](decisions.md)に集約する。依存ファイルの実値は[実装状況](../process/implementation-status.md)を参照。
+JDKは21 LTSを採用する。ソルバー、地図・決済・通知・IdP、macOSランナーの選定条件は[意思決定記録](decisions.md)に集約する。依存ファイルの実値は[実装状況](../process/implementation-status.md)を参照。
 
 [公式互換表・一次資料](../reference/engineering-sources.md)
+
+## v0.1の固定値
+
+Java 21、Spring Boot 3.5.16、Gradle Wrapper 8.14.3、jOOQ 3.19.33、PostgreSQL 16.15、Flutter 3.47.6、OpenAPI Generator 7.15.0。Dartのパッケージ解決は`pubspec.lock`、Javaの依存解決は`gradle.lockfile`で固定する。

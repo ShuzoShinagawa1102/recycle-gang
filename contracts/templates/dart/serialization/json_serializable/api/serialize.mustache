@@ -1,0 +1,10 @@
+{{#bodyParam}}
+_bodyData = jsonEncode({{paramName}});
+{{/bodyParam}}
+{{#hasFormParams}}
+_bodyData = FormData.fromMap(<String, dynamic>{
+{{#formParams}}
+  {{^required}}if ({{paramName}} != null) {{/required}}r'{{baseName}}': {{paramName}},
+{{/formParams}}
+});
+{{/hasFormParams}}
