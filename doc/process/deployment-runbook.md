@@ -1,6 +1,6 @@
-# デプロイ手順のたたき台
+# デプロイ手順
 
-更新日：2026-10-03。手動開始→自動実行の運用設計。AWS/ストア環境は未構築であり、この文書だけで現在実行可能ではない。公式リンクは手順の根拠で、プロジェクト固有の設定の代わりにはしない。
+更新日：2026-10-03。手動開始後、指定成果物の検証・反映・公開確認を自動実行する。
 
 ## 実行可能にするための登録事項
 
@@ -38,7 +38,9 @@ devはdevelop/releaseの特定成功成果物を選べる。本番は正式タ�
 2. digestを指定した新task definition revisionを登録し、対象serviceを更新する。
 3. rolling更新を監視し、旧新共存中のエラー・ALB health・タスク再起動・DB接続を確認する。
 4. service stableだけでなく、主要API/業務smokeを確認する。
-5. 失敗時は互換DB上で直前のtask definitionへ戻す。起動失敗検知・ロールバック機構はIaC実装時に設定して試験する。
+5. 失敗時は互換DB上で直前のtask definitionへ戻す。起動失敗検知・ロールバック機構をIaCで設定して試験する。
+
+Service Connectの初回構築・endpoint追加ではoptimizerを先に配置し、その後に基幹を再デプロイする。既存endpointの通常更新は契約互換性を保つ。optimizerは公開ALBではなく内部APIでsmokeし、Auroraへ接続できないことも確認する。
 
 optimizerとBEは互換な契約で段階更新する。非互換な場合は新旧API並行提供等を計画する。進行中ジョブを失わない停止/再開条件も確認する。
 
@@ -46,7 +48,7 @@ optimizerとBEは互換な契約で段階更新する。非互換な場合は新
 
 出力は`flutter build web`の`build/web`。CIでは非公開保管S3の版別領域へzip等で保存する。
 
-初期案はCloudFront distribution/公開S3を固定し、指定成果物を公開先へ反映する。通常リリースでdistributionの向き先を手で変更することを必須にしない。
+CloudFront distribution/公開S3を固定し、指定成果物を公開先へ反映する。通常リリースでdistributionの向き先を手で変更することを必須にしない。
 
 1. 保存成果物のchecksum、API接続設定、base path、配信ヘッダーを検証する。
 2. 現行版を版付き成果物として保持し、新しい資産を先に配置、入口HTML/起動ファイルを最後に反映する。

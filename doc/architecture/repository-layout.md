@@ -1,60 +1,140 @@
-# フォルダ構成と依存方向の案
+# フォルダ構成と依存方向
 
-更新日：2026-10-03。以下は目標構成。今回、アプリケーション資材の移動や生成は行っていない。
+以下を実装の配置規約とする。生成物は再生成で置き換え、手修正しない。
 
 ## recycle-gang
 
-| パス | 責務 |
-|---|---|
-| `flutter/` | 利用者アプリ。既存配置を維持 |
-| `backend/` | Spring Boot、Gradle、DB変更資材 |
-| `contracts/openapi/` | consumer.yaml、backyard.yaml、必要時internal.yaml、共通components |
-| `contracts/generator/` | 生成器の版・設定・契約の取得／bundle手順 |
-| `infra/` | AWS IaC。実装時に追加 |
-| `ci/` | buildspec、ビルド・検証・公開スクリプト。実装時に追加 |
-| `doc/architecture/` | 技術・構造・依存方向 |
-| `doc/business/` | 業務ルールの正 |
-| `doc/process/` | 試験・開発・リリース・手順 |
+```text
+recycle-gang/
+├── backend/
+│   ├── src/main/java/com/recyclegang/backend/
+│   │   ├── reservation/      # 予約
+│   │   ├── schedule/         # 地域・運行便・予約枠
+│   │   ├── partner/          # 業者・車両・稼働条件
+│   │   ├── dispatch/         # 募集・オファー・割当
+│   │   ├── planning/         # 計算ジョブ・候補・経路採用
+│   │   ├── collection/       # 回収・引渡し・SOS
+│   │   └── payment/          # 支払・返金・精算
+│   ├── src/main/resources/db/migration/
+│   ├── src/test/
+│   ├── db/
+│   │   ├── fixtures/         # 開発・試験専用データ
+│   │   └── maintenance/
+│   │       └── YYYY-MM-DD_purpose/
+│   │           ├── README.md
+│   │           ├── precheck.sql
+│   │           ├── apply.sql
+│   │           └── postcheck.sql
+│   └── build/generated/     # jOOQ・OpenAPI生成Java
+├── flutter/
+│   ├── lib/
+│   │   ├── app/              # 起動・ルーティング・認証
+│   │   └── features/
+│   │       └── reservations/
+│   │           ├── presentation/
+│   │           ├── application/
+│   │           └── data/
+│   ├── packages/consumer_api/
+│   ├── test/
+│   └── integration_test/
+├── contracts/
+│   ├── openapi/
+│   │   ├── consumer.yaml
+│   │   ├── backyard.yaml
+│   │   ├── admin.yaml
+│   │   └── components/
+│   └── generator/            # 生成器・設定・取得版の固定
+├── infra/                    # Terraform、dev/prod別state
+├── ci/                       # buildspecと検証・配布スクリプト
+└── doc/
+    ├── business/
+    ├── architecture/
+    ├── process/
+    └── reference/
+```
 
-## BEのパッケージ
+## 業務モジュールの内部
 
-ルートは既存の`com.recyclegang.backend`を維持する。直下に`reservation`、`schedule`、`dispatch`、`collection`、`planning`、`payment`、`partner`等を置く案とする。
+`reservation`を例とする。同じ構造を各モジュールに適用し、必要なアダプターだけを置く。
 
-`reservation`の例：
+```text
+reservation/
+├── ReservationFacade.java   # 他モジュールに公開する入口
+├── ReservationId.java
+├── ReservationChanged.java  # 公開する業務イベント
+├── domain/                   # 集約・値オブジェクト・業務ルール
+├── application/
+│   ├── command/              # 更新ユースケース
+│   ├── query/                # 参照ユースケース・表示用projection
+│   └── port/                 # repository・外部連携のインターフェース
+└── adapter/
+    ├── in/web/               # Controller・API DTO変換
+    └── out/
+        ├── persistence/      # jOOQとドメインの変換
+        └── integration/      # 外部サービス接続
+```
 
-| パッケージ | 内容・依存 |
-|---|---|
-| `reservation` | 他モジュールに公開する少数のfacade・ID・イベント。内部実装を公開しない |
-| `reservation.domain` | 集約、値オブジェクト、業務ルール。Spring/jOOQ/API生成物に依存しない |
-| `reservation.application` | command/query、ユースケース、トランザクション、port。domainに依存 |
-| `reservation.adapter.in.web` | 用途別controller、API DTOからの変換。applicationを呼ぶ |
-| `reservation.adapter.out.persistence` | jOOQによるrepository/query実装、domainとの変換 |
-| `reservation.adapter.out.integration` | 外部サービス接続。必要なモジュールにだけ配置 |
+```mermaid
+flowchart TD
+  W[Webアダプター] --> A[application]
+  A --> D[domain]
+  A --> P[application.port]
+  S[jOOQアダプター] -.->|実装| P
+  H[HTTPアダプター] -.->|実装| P
+  S --> D
+  H --> D
+```
 
-Spring Modulithの既定検出ではルート直下がモジュール、サブパッケージが内部となる。公開APIを別サブパッケージにする場合はNamedInterface等を明示する。生成コード・起動設定を業務モジュールとして誤検出させないよう、検出設定と境界試験を設ける。
+矢印はコードの依存を表す。domainはSpring・jOOQ・HTTP・生成API DTOへ依存しない。DIでportにアダプターを接続する。
 
-- モジュールAからBのdomain/repositoryへ直接依存しない。Bの公開facade/イベント経由とする。
-- 更新側のSQLは所有モジュールが管理する。他モジュールのテーブルを直接更新しない。
-- 参照の横断JOINは明示したqueryアダプターで許容できる。読み取り専用とし、依存するテーブルと試験範囲を記録する。必要なら公開projectionへ移行する。
-- 同一DB内の必須整合性は同期呼出しとトランザクションを使う。外部HTTPをDBトランザクション中に待たない。
-- 外部通知等に再試行・配信保証が必要になればoutbox等を設計する。プロセス内イベントだけで配信保証済みとは扱わない。
-- 共通化はID、時刻、エラー等の小さな技術要素に留め、sharedへ業務ロジックを集めない。
+## モジュール境界
 
-## Flutter
+- 他モジュールには公開facade・ID・イベントだけを見せる。内部domainやrepositoryを直接参照しない。
+- Spring Modulithのモジュール検出を設定し、生成コードと起動設定を業務モジュールから除外する。循環依存と内部参照をCIで検出する。
+- テーブルの更新は所有モジュールが担当する。横断参照SQLは明示したqueryアダプターに置き、参照テーブルを試験対象として記録する。
+- 同一DBで同時確定すべき変更は同期処理とトランザクションで結ぶ。外部HTTPはその外で実行する。
+- 業務変更による計画revision更新は同一トランザクションの同期イベント処理で行う。外部通知の配信保証には永続outboxを使う。
+- 共通化はID・時刻・エラー等に限定し、業務ロジックをsharedへ集約しない。
 
-| パス例 | 内容 |
-|---|---|
-| `flutter/lib/app/` | 起動、ルーティング、テーマ、認証状態、環境設定 |
-| `flutter/lib/features/<業務>/presentation/` | 画面、widget、Riverpodによる画面状態 |
-| `flutter/lib/features/<業務>/application/` | クライアントの操作フロー |
-| `flutter/lib/features/<業務>/data/` | SDK呼出しと表示モデルへの変換 |
-| `flutter/packages/consumer_api/` | consumer契約から生成するSDK |
-| `flutter/test/`、`flutter/integration_test/` | widget・機能・端末試験 |
+## recycle-gang-backyard
 
-クライアントに必要な入力検証・表示計算は実装するが、サーバーの業務判定を最終決定として扱う。業者向けと運営向けの画面は権限別に構成する。Webの横幅に合わせた一覧・キーボード操作を別途設計する。
+```text
+recycle-gang-backyard/
+├── flutter/
+│   ├── lib/
+│   │   ├── app/
+│   │   └── features/
+│   │       ├── provider/     # 業者：オファー・担当回収・SOS
+│   │       └── admin/        # 管理者：運行・割当・経路・監査
+│   ├── packages/
+│   │   ├── backyard_api/
+│   │   └── admin_api/
+│   ├── test/
+│   └── integration_test/
+├── ci/
+└── doc/
+```
 
-## 関連リポジトリ
+業者はWeb/モバイル、管理者はWebを対象とする。管理者機能は同じFlutterプロジェクト内の独立featureとし、API契約と権限を分離する。
 
-- backyard：`flutter/`、`doc/`、`ci/`。生成SDKは`flutter/packages/backyard_api/`。別の業務BEやFlywayは置かない。
-- optimizer：`src/recycle_gang_optimizer/`配下に`api/`、`application/`、`domain/`、`adapters/`。`contracts/openapi/optimizer.yaml`、`tests/`、`doc/`、`ci/`。ソルバーとHTTPの依存を計算モデルから切り離す。
-- 生成Java/jOOQは`backend/build/generated/`を基本とし直接編集しない。SDKをコミットするかは再生成検証と併せて統一する。初期案は版付き契約と生成設定からCIで生成する。
+## recycle-gang-optimizer
+
+```text
+recycle-gang-optimizer/
+├── src/recycle_gang_optimizer/
+│   ├── api/                  # FastAPI・認証・DTO検証
+│   ├── application/          # 計算実行・時間制限・並列数制御
+│   ├── domain/               # 訪問・車両・制約・計算結果
+│   └── adapters/solver/      # ソルバーとの変換
+├── contracts/openapi/optimizer.yaml
+├── tests/
+│   ├── unit/
+│   ├── solver/
+│   └── contract/
+├── ci/
+├── doc/
+├── pyproject.toml
+└── uv.lock
+```
+
+ジョブ永続化は基幹のplanningに置く。optimizerには業務DBアダプターを置かない。

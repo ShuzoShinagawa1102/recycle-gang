@@ -24,3 +24,15 @@
 | Flutter | [Web](https://docs.flutter.dev/deployment/web)、[iOS](https://docs.flutter.dev/deployment/ios)、[Android](https://docs.flutter.dev/deployment/android)、[CD](https://docs.flutter.dev/deployment/cd) | 成果物、署名、配布 |
 | CodeBuild Mac | [Compute types](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-compute-types.html)、[Pricing](https://aws.amazon.com/codebuild/pricing/) | macOS fleet・最低利用期間 |
 | GitHub runner | [Hosted runners](https://docs.github.com/en/actions/reference/runners/github-hosted-runners) | iOS用macOS候補 |
+
+
+## AWS構成図レビューで確認した資料
+
+| 対象 | 一次資料 | 確認点 |
+|---|---|---|
+| Service Connect | [Components](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-connect-concepts-deploy.html) | alias、SG、timeout、endpoint追加時の再配置、CodeDeploy制約 |
+| ALB | [SetSubnets](https://docs.aws.amazon.com/elasticloadbalancing/latest/APIReference/API_SetSubnets.html) | 2AZ subnet要件 |
+| Aurora | [Create cluster](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.CreateInstance.html) | DB subnet groupとストレージ/instanceの違い |
+| WAF | [Resource association](https://docs.aws.amazon.com/waf/latest/developerguide/web-acl-associating-aws-resource.html) | CloudFrontへのWeb ACL関連付け |
+| CloudFront origin保護 | [Restrict ALB access](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/restrict-access-to-load-balancer.html) | prefix list、秘密header、HTTPS |
+| ECR | [VPC endpoints](https://docs.aws.amazon.com/AmazonECR/latest/userguide/vpc-endpoints.html) | image取得とS3経路 |

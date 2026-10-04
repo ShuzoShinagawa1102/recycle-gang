@@ -1,39 +1,37 @@
-# システム・リポジトリ境界
+# システム構成と責務
 
-更新日：2026-10-03。責務・通信方針は合意済み。詳細実装は提案。
-
-## 責務
+## リポジトリ境界
 
 | リポジトリ | 所有するもの | 接続先 |
 |---|---|---|
-| recycle-gang | 利用者Flutter、Spring Boot、業務モデル、業務DBとFlyway、基幹OpenAPI、全体方針 | optimizer、決済・通知等の外部アダプター |
-| recycle-gang-backyard | 業者・運営向けFlutter、Web/モバイル画面、画面状態、生成SDK | 基幹backyard API |
-| recycle-gang-optimizer | Python計算、FastAPI、最適化契約、計算ジョブ | 初期案はSpring Bootから呼ばれる。業務DBには接続しない |
-
-リポジトリ、業務領域、デプロイ単位は別の境界である。基幹は初期1アプリケーション・1論理DB。optimizerは別プロセス／ECSワークロードとする。利用者／業者／運営は業務データの所有者を分ける根拠にせず、権限と公開DTOを分ける。
+| recycle-gang | 利用者Flutter、Spring Boot、業務モデル、業務DB、Flyway、基幹OpenAPI、共通設計・IaC | optimizer、決済・通知・地図等 |
+| recycle-gang-backyard | 業者向けFlutter Web/モバイル、管理者向けFlutter Web、生成SDK | 基幹backyard / admin API |
+| recycle-gang-optimizer | FastAPI、計算モデル、ソルバーアダプター、最適化OpenAPI | 基幹から受け取った入力を計算して返す |
 
 ```mermaid
 flowchart TD
-  U[利用者Flutter] -->|consumer API| B[Spring Boot]
-  Y[バックヤードFlutter] -->|backyard API| B
-  B -->|業務データ| D[(Aurora)]
-  B -->|版付き計算入力| O[Python / FastAPI]
+  U[利用者アプリ] -->|consumer API| B[Spring Boot]
+  Y[業者アプリ] -->|backyard API| B
+  A[管理者Web] -->|admin API| B
+  B -->|業務データ・計算ジョブ| D[(Aurora)]
+  B -->|入力スナップショット| O[FastAPI / Python]
   O -->|経路候補| B
-  B -->|連携| X[決済・通知サービス]
+  B --> X[決済・通知・地図]
 ```
 
-## 所有と確定
+基幹は業務モジュールを内包する1つのデプロイ単位とし、1つの論理DBを利用する。optimizerは計算負荷と障害を基幹から分離する独立したECSサービスとする。
 
-予約・募集・業者割当・回収実績・採用済み配送計画の正はSpring Boot側。optimizerは車両割当も含めた候補を計算できるが、業者契約や予約確定を更新しない。候補の採用可否は基幹が判定し、採用済みの順序をバックヤードへ返す。
+## データ所有と確定権限
 
-optimizerの計算入力・結果・ジョブ状態の保存は許容するが、業務DBの共有はしない。計算状態の永続化方式は非同期化時に決める。Python固有の計算モデルにJavaドメインクラスの全構造を複製しない。
+基幹が予約・募集・業者割当・実績・支払・採用済み経路を所有する。利用者・業者・管理者は同じ業務を異なる権限で操作する。画面ごとに別の業務サーバーやDBを持たない。
 
-## 初期の依存方向
+計算入力・ジョブ状態・候補・採用履歴も基幹で保存する。optimizerはステートレスな計算サービスであり、Auroraへの接続権限を持たない。再送による重複計算は許容し、重複した業務反映は基幹で防ぐ。
 
-- Flutter → 生成API SDK → 基幹API。
-- Spring Bootの配送計画ユースケース → 最適化ポート → HTTPアダプター → FastAPI。
-- FastAPI → Python計算サービス → 計算モデル／ソルバー。
-- 最適化の入力取得・業務更新のためのPython → Spring Boot呼出しは初期の必須要件にしない。必要になればinternal APIとして追加する。
-- OpenAPI仕様をコピーして独立編集しない。提供側リポジトリの版付き契約を取得し、利用側で取得版・ハッシュを固定する。
+## 依存方向
 
-責務の根拠は [業務要件](../business/requirements.md)、[API契約](backend/api-contract-policy.md)、[最適化連携](backend/optimizer-contract.md)。
+- Flutter → 用途別生成SDK → 基幹のAPIアダプター → 業務ユースケース。
+- 基幹のplanningユースケース → 最適化ポート → 生成HTTPクライアント → FastAPI。
+- FastAPI → 計算ユースケース → 計算モデル。ソルバーは外側のアダプターとして実装する。
+- API契約は提供側が所有する。利用側は版とハッシュを固定して取得する。
+
+詳細：[ドメインモデル](backend/domain-model.md)、[最適化API](backend/optimizer-contract.md)、[画面と権限](ui/application-boundaries.md)。

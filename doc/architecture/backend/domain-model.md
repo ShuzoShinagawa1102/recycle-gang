@@ -1,43 +1,138 @@
-# ドメインモデルのたたき台
+# ドメインモデル
 
-更新日：2026-10-03。DDD採用は合意済み。以下のモジュール名・集約・属性・状態は設計案。未決条件を確定仕様にしない。
+予約、運行、業者、配車、経路計画、回収、決済を業務モジュールとする。以下のER形式の図は業務モデルの関係を表す。物理テーブルと外部キーはFlywayで定義し、クラスとの1対1対応を要求しない。
 
-## 業務領域と集約候補
+## モジュールと集約
 
-| モジュール | 集約・モデル候補 | 守る責務・境界 | 根拠 |
-|---|---|---|---|
-| reservation | Reservation、CollectionItem、PickupLocation、Money | 依頼内容、予約変更、取消。料金見積と確定額の扱いは別途定義 | BR-REG、BR-CAN |
-| schedule | ServiceArea、ServiceSchedule、ServiceRun、BookingCapacity | 定期運行の定義と、特定日の便を分ける。公開枠・容量管理 | BR-REG-01〜02、Q-06 |
-| partner | Partner、Vehicle、Availability | 業者所属、車両、稼働可能条件 | REQ-P、Q-06/09 |
-| dispatch | Recruitment、Offer、Assignment | 募集、応募/承諾、割当確定を区別。定期・即時・SOSの差分はポリシー化候補 | BR-REG-04〜05、BR-IMM、BR-SOS |
-| planning | PlanningSnapshot、OptimizationJob、RoutePlan | 計算要求、入力版、候補、採用済み計画の履歴。計算中の業務変更検知 | BR-OPS-01、Q-07 |
-| collection | Visit、CollectionResult、Handover、SosCase | 訪問・回収成果・搬入/引渡し・救援依頼。完了の定義はQ-08で確定 | BR-OPS-02〜03、BR-SOS |
-| payment | Payment、Refund、Settlement | 利用者支払、返金、業者報酬を区別し、外部決済結果を記録 | BR-PAY、BR-CAN、Q-02/04/05 |
+| モジュール | 主な集約・モデル | 守る業務 |
+|---|---|---|
+| reservation | Reservation、CollectionItem、PickupLocation | 回収依頼の内容、変更、取消 |
+| schedule | ServiceArea、ServiceSchedule、ServiceRun、BookingCapacity | 定期運行、特定日の便、予約枠 |
+| partner | Partner、Vehicle、Availability | 業者所属、車両、稼働可能条件 |
+| dispatch | Recruitment、Offer、Assignment | 募集、提示・応答、最終割当 |
+| planning | PlanningScope、PlanningSnapshot、OptimizationJob、RoutePlan | 入力固定、計算、変更検知、候補採用 |
+| collection | Visit、CollectionResult、Handover、SosCase | 訪問、回収記録、引渡し、救援 |
+| payment | Payment、Refund、Settlement | 利用者支払、返金、業者報酬の精算 |
 
-認証主体と業者所属の対応は技術認証と分けて管理する。通知は各業務から利用する外部アダプターを起点とし、初期から独立した巨大なドメインにはしない。
+## 予約と運行
 
-## モデル化の原則
+```mermaid
+erDiagram
+  direction TB
+  ServiceArea ||--o{ ServiceSchedule : defines
+  ServiceSchedule ||--o{ ServiceRun : generates
+  ServiceRun |o--o{ Reservation : receives
+  Reservation ||--|{ CollectionItem : contains
+  ServiceRun {
+    UUID id PK
+    date serviceDate
+    string status
+  }
+  Reservation {
+    UUID id PK
+    UUID customerId
+    UUID serviceRunId FK
+    string requestType
+    string status
+  }
+  CollectionItem {
+    UUID id PK
+    UUID reservationId FK
+    string category
+    decimal quantity
+  }
+```
 
-- 予約・支払・割当・回収・搬入の状態を1つの巨大なstatusに押し込めない。例えば支払済みでも業者未割当はあり得る。
-- 定期便の繰返し定義と、2026-10-10の特定便を区別する。
-- 募集オファーへの応答と、業務上の最終割当を別概念にする。承諾と同時に確定するかは未決。
-- 利用者支払額と業者報酬を同じMoney項目で兼用しない。
-- 1集約＝1テーブルにしない。1集約を複数テーブルへ保存できる。逆に一覧画面は複数集約のprojectionでよい。
-- 大量の全予約を1つの便集約の可変リストとして常時ロードしない。予約枠の容量確保は専用の整合性境界を設計する。
-- ID参照を基本にする。容量の取り合い、同一作業への二重割当、重複決済通知などは、業務判定に加えてDB制約・ロック・冪等性で担保する。
+ServiceScheduleは繰返し定義、ServiceRunは特定日の運行便である。即時依頼等で便へ割り当てる前の予約を扱うため、予約の便参照は任意とする。予約を便集約の巨大な可変リストとして常時ロードせず、予約枠の確保を専用の整合性境界で制御する。
 
-## 最初に検証するシナリオ
+## 募集と割当
 
-1. 空き枠への同時予約：確保方式と超過時の応答をQ-06確定後に決める。
-2. 業者募集後に予約が増減：募集数・割当・計画へ何を伝えるか。
-3. 2業者が同じオファーへ同時応答：Q-05の成立条件を確定後に排他を設計する。
-4. 計算中に予約/車両/稼働条件が変わる：古い候補を採用せず再計算へ進める。
-5. 回収後・搬入前の状態：Q-08の完了条件を満たす独立記録にする。
-6. SOSで残作業を引き継ぐ：元の実績を残し、引継ぎ範囲・報酬のQ-04/09を確認する。
-7. 同じ完了通知や決済通知を再送：重複した実績・請求・返金を作らない。
+```mermaid
+erDiagram
+  direction TB
+  Recruitment ||--o{ Offer : issues
+  Partner ||--o{ Offer : receives
+  Recruitment ||--o{ Assignment : establishes
+  Partner ||--o{ Assignment : fulfills
+  Partner ||--o{ Vehicle : operates
+  Recruitment {
+    UUID id PK
+    string requestType
+    string workScopeRef
+  }
+  Offer {
+    UUID id PK
+    UUID partnerId FK
+    string status
+  }
+  Assignment {
+    UUID id PK
+    UUID partnerId FK
+    string workScopeRef
+    string status
+  }
+```
 
-## 未決事項との関係
+募集の対象作業、業者への提示、最終割当を分ける。`workScopeRef`は便・即時依頼・SOS等の対象範囲を表す概念上の参照であり、物理DBに無制約の汎用外部キーを置く指示ではない。採用経路は成立済みの担当条件を守る。
 
-基準時刻・予約確定対象はQ-01、キャンセルと返金はQ-02、即時募集はQ-03/05、SOS報酬はQ-04、容量/予測はQ-06、経路変更はQ-07、完了条件はQ-08、業者拘束はQ-09を参照する。状態遷移表と集約の最終決定はこれらを確認してから行う。
+## 計算と経路採用
 
-参照：[業務ルール](../../business/business-rules.md)、[業務フロー](../../business/workflows.md)、[構成案](../repository-layout.md)。
+```mermaid
+erDiagram
+  direction TB
+  PlanningScope ||--o{ PlanningSnapshot : versions
+  PlanningSnapshot ||--o{ OptimizationJob : used_by
+  OptimizationJob ||--o{ RoutePlan : produces
+  RoutePlan ||--o{ RouteStop : orders
+  PlanningScope {
+    UUID id PK
+    long revision
+  }
+  PlanningSnapshot {
+    UUID id PK
+    long inputRevision
+    string inputHash
+  }
+  OptimizationJob {
+    UUID id PK
+    string status
+    int attempt
+  }
+  RoutePlan {
+    UUID id PK
+    string status
+    UUID vehicleId
+  }
+  RouteStop {
+    UUID reservationId
+    int sequence
+    datetime estimatedArrival
+  }
+```
+
+PlanningScopeの単位は1運行便とする。複数便の車両・作業を一括計算する場合は、対象scopeのIDとrevisionの組を入力に持たせる。訪問順・車両・容量・時間制約に影響する変更ではrevisionを進める。採用済み計画の変更が必要になった場合も、履歴を残して後続版を作る。
+
+## 回収と精算
+
+```mermaid
+erDiagram
+  direction TB
+  Reservation ||--o{ Visit : schedules
+  Visit ||--o{ CollectionResult : records
+  Visit ||--o{ SosCase : requests
+  Handover }o--o{ CollectionResult : includes
+```
+
+訪問、実際の回収結果、搬入・引渡しを別記録とする。SOSによる担当変更でも元の実績を保持する。支払・返金・業者精算はpaymentが別集約として管理し、利用者の支払額と業者報酬を同じ金額項目で兼用しない。
+
+## 不変条件と排他
+
+- 予約、支払、割当、回収、引渡しの状態を1つのstatusにまとめない。
+- 同一作業への重複割当や重複決済は、業務判定・DB制約・冪等性で防ぐ。
+- 最適化結果は候補として保存し、入力版と現在版が一致する場合だけ採用する。
+- 集約の永続化は複数テーブルでよい。画面一覧は複数集約を読むprojectionでよい。
+- 管理者の操作も同じユースケースを通し、操作者・対象・変更・理由を記録する。
+
+予約確定時刻、返金、オファー成立、SOS報酬、容量、運行中の変更範囲、完了条件は[業務上の決定事項・Q-01〜Q-09](../../business/decisions.md)で定義する。図の多重度だけで料金や成立条件を決めない。
+
+関連：[業務ルール](../../business/business-rules.md)、[最適化API](optimizer-contract.md)、[DB変更](database-change-policy.md)。

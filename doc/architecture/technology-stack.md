@@ -1,45 +1,35 @@
-# 技術スタック案
+# 技術スタック
 
-更新日：2026-10-03。採用方針と追加提案を区別する。ここに書いた候補は依存ファイルへの適用済みを意味しない。
+## 採用する技術
 
-## 現行確認
-
-main `22cb860b9dc7937bdf0ec95485840cca05ef84f1`を確認した。
-
-- backend：Spring Boot 3.5.16、Java toolchain 22、Gradle。Webと起動テストの骨組み。Gradle Wrapperは未配置。
-- Flutter：pubspecでDart `^3.13.4`、Riverpod `^3.4.3`、go_router `^18.0.2`。既存の選択を起点にする。
-- backyard、optimizer：今回の文書整備前は空リポジトリ。
-
-## 推奨構成
-
-| 対象 | 方針／候補 | 状態・理由 |
+| 対象 | 技術 | 役割 |
 |---|---|---|
-| Java | Java 25 LTSへの移行を提案 | 現在の22を維持したまま記録。長期運用用のJDK選択としてレビューする |
-| BE | Spring Boot 3.5系を当面継続 | 既存構成を起点にし、JDK・依存ライブラリ・サポート期間を実装着手時に再確認 |
-| ビルド | Gradle Wrapper、Java toolchain、依存ロック | Gradle採用済み。Wrapperの版はBoot pluginとJDKの両方に適合させる |
-| モジュール | Spring Modulithの境界検証・モジュール試験 | 提案。Gradleを多数のサブプロジェクトに分けることは初期必須にしない |
-| DBアクセス | jOOQ、JDBC、Springのトランザクション | 合意済み。生成器と実行時のjOOQ版を一致させる |
-| マイグレーション | Flyway SQL | 合意済み。JPA/HibernateはDDL生成目的では追加しない |
-| DB | Aurora PostgreSQL互換 Serverless v2 | Auroraは合意済み、PostgreSQL互換を具体案とする |
-| API | REST/JSON、OpenAPI Generator | 合意済み。Spring API interface/DTO、dart-dio SDKを生成 |
-| API仕様版 | OpenAPI 3.0.3から開始する案 | Spring・Dart・Pythonの生成互換性を実契約で確認後に固定。最新版への追随を目的にしない |
-| 認証・認可 | Spring Security、OIDC、M2M専用認証 | 提案。IdPは未決、Cognito等を別途比較。所属業者・予約所有権はアプリで確認 |
-| Flutter | 既存Riverpod、go_router、生成SDK＋Dio | 既存資産を継続。Flutter SDK自体も固定し、pubspec.lockを管理 |
-| Python | FastAPI、Pydantic、uv、pytest | FastAPIは合意済み。他は提案。Pythonは3.12系を初期互換性検証の起点にする |
-| 経路ソルバー | OR-Toolsを第一候補 | 未採用。容量・時間窓・計算時間・未割当の扱いを小さなケースで検証 |
-| AWS実行 | ECS Fargate、ECR、ALB、S3、CloudFront | ECS等は合意済み。Fargateを具体案とする |
-| IaC | Terraform | 提案。全体infraを基幹リポジトリで管理し、環境別state。アカウント/リージョン確定後に実装 |
-| CI | CodePipeline V2＋CodeBuild | 合意済み。iOSのmacOS実行のみ別途選定 |
-| 監視 | CloudWatch、Actuatorの制限公開 | 提案。業務エラー・計算失敗・配布失敗も監視対象 |
+| 基幹 | Java / Spring Boot / Gradle | 業務ユースケースとREST API |
+| モジュール | Spring Modulith | 境界検証と業務モジュール単位の結合試験 |
+| DB | Aurora PostgreSQL互換 Serverless v2 | 業務データ・ジョブ・履歴の永続化 |
+| SQL | jOOQ / JDBC / Springトランザクション | 型付きSQLとドメインへの変換 |
+| DB変更 | Flyway | 版付きDDL・必須データ変更 |
+| API | REST / JSON / OpenAPI 3.0.3 | 提供者と利用者の契約 |
+| コード生成 | OpenAPI Generator | Spring interface/DTO、Dart Dio SDK、Java最適化クライアント |
+| 認証 | OIDC / Spring Security | ログインとAPI認可。IdP製品は選定事項 |
+| クライアント | Flutter / Riverpod / go_router / Dio | 利用者・業者・管理者画面 |
+| 最適化 | Python / FastAPI / Pydantic | 内部計算APIと入出力検証 |
+| Python開発 | uv / pytest | 依存固定と試験 |
+| 実行基盤 | ECS Fargate / ECR | 基幹・最適化のコンテナ実行 |
+| 内部通信 | ECS Service Connect | 基幹から最適化へのサービス名による接続 |
+| Web配信 | CloudFront / WAF / S3 OAC / ALB | 静的資産とAPIの配信 |
+| IaC | Terraform | 環境別のAWS構成管理 |
+| CI/CD | CodePipeline / CodeBuild | 検証、成果物保管、手動開始の公開 |
+| 監視・秘密 | CloudWatch / Secrets Manager | ログ・メトリクス・秘密管理 |
 
-上記候補のうちJava/Gradle/jOOQの具体的な組合せは [公式互換表](../reference/engineering-sources.md) で検証する。jOOQ OSSと商用版では必要JDKやサポートDBが異なるため、Spring Boot BOM、jOOQコード生成器、利用DBの整合を確認する。未検証の具体的バージョンを一括で書き換えない。
+基幹は同一DBでcommandとqueryのモデルを分ける。JPAによるDDL生成、イベントソーシング、参照専用DBは採用しない。
 
-## バージョン固定と更新
+## バージョンの管理
 
-ツール・依存・コンテナベースイメージは固定して再現性を確保する。更新は独立した変更としてCIで検証する。日次CI内で依存を勝手に最新化しない。契約生成器の版と設定もGit管理する。
+JDK・Gradle・Spring Boot・jOOQ・PostgreSQLは一組として互換性を検証する。生成時と実行時のjOOQ版を揃え、利用エディションのJDK/DB対応条件を満たす。Gradle Wrapper、toolchain、依存ロックをリポジトリで管理する。
 
-移行PRでは現行/移行後JDKでのビルド、生成コード、DB結合試験を確認する。現在のJava 22指定を変更するかはTECH-01のレビュー対象。
+Flutter SDK・Dart・生成器、Python・ソルバー・コンテナベースイメージも固定する。日次CIで依存を自動的に最新版へ置き換えない。更新は専用の変更として生成・ビルド・DB結合・契約試験を通す。
 
-## 今回選ばないもの
+JDKのLTS移行、ソルバー、地図・決済・通知・IdP、macOSランナーの選定条件は[意思決定記録](decisions.md)に集約する。依存ファイルの実値は[実装状況](../process/implementation-status.md)を参照。
 
-業務モジュールごとのマイクロサービス、参照専用DB、イベントソーシング、大規模なメッセージ基盤は初期必須にしない。ソルバー、地図・移動時間提供元、決済、通知、IdPは業務要件と費用を確認して選ぶ。
+[公式互換表・一次資料](../reference/engineering-sources.md)

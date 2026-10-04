@@ -32,6 +32,7 @@ components:
 contracts:
   consumer: {api_major: null, artifact_version: null, checksum: null}
   backyard: {api_major: null, artifact_version: null, checksum: null}
+  admin: {api_major: null, artifact_version: null, checksum: null}
   optimizer: {api_major: null, artifact_version: null, checksum: null}
 compatibility:
   required_capabilities: []

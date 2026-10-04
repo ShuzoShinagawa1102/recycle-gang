@@ -4,7 +4,7 @@ Recycle Gang のシステムアーキテクチャに関する資料を管理し�
 
 - [開発・運用方針の入口](development-baseline.md)
 - [システム・リポジトリ境界](system-overview.md)
-- [技術スタック案](technology-stack.md)
+- [技術スタック](technology-stack.md)
 - [フォルダ構成・依存方向](repository-layout.md)
 - [バックエンド](backend/index.md)
 - [UI](ui/index.md)

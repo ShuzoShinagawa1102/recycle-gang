@@ -10,3 +10,5 @@ Recycle Gang の開発プロセス、運用ルール、開発方針を管理し�
 - [開発方針全体](../architecture/development-baseline.md)
 
 2026-10-03時点では方針文書です。パイプラインや日次CIは未設定です。
+
+- [設計と実装の対応](implementation-status.md)

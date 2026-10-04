@@ -1,10 +1,10 @@
 # CI/CD方針
 
-更新日：2026-10-03。起動条件は合意済み。AWS/GitHubにパイプライン・定期実行を設定済みという意味ではない。
+更新日：2026-10-03。基準ブランチは`develop/v1`。
 
 ## 起動条件
 
-PR列は宛先ブランチを示す。作成・更新で起動し、再オープンも同じ検証を行う具体案とする。
+PR列は宛先ブランチを示す。作成・更新で起動し、再オープンも同じ検証を行う。
 
 | ブランチ | Push CI | そのブランチ宛PR CI | 日次CI | 自動CD |
 |---|---|---|---|---|
@@ -28,7 +28,7 @@ PR実行には本番秘密情報、署名鍵、公開先更新権限を渡さな
 
 ## 日次実行
 
-EventBridge Schedulerで`cron(0 5 * * ? *)`、timezone `Asia/Tokyo`、flexible window無効を基本案とする。05:00開始要求であり秒単位の開始保証ではない。UTC運用なら前日20:00に相当する。
+EventBridge Schedulerで`cron(0 5 * * ? *)`、timezone `Asia/Tokyo`、flexible window無効をとする。05:00開始要求であり秒単位の開始保証ではない。UTC運用なら前日20:00に相当する。
 
 対象は稼働中のdevelop系列とmain。開始時のコミットを固定し、ブランチ名だけを渡して後から別コミットへずれないようにする。手動/定期開始でCodePipelineの既定ブランチが使われる挙動に注意し、パイプライン分割またはsource revisionの明示で対象を保証する。
 
@@ -53,6 +53,6 @@ CDは人が環境・コンポーネント・成果物IDを指定して開始し�
 - ビルドの重複排除キーはSHAだけでなく、コンポーネント・環境/設定・ツール版を含める。
 - GitHub/AWS連携認証は短期資格情報等を使う。機密値はログや公開リポジトリに出さない。
 - 依存ツールを固定し、日次で勝手に更新しない。
-- iOSのmacOS実行は [モバイル配布案](../architecture/infrastructure/mobile-delivery.md) に従う。
+- iOSのmacOS実行は [モバイル配布](../architecture/infrastructure/mobile-delivery.md) に従う。
 
 公式資料：[CodePipeline trigger](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipelines-triggers.html)、[Scheduler](https://docs.aws.amazon.com/scheduler/latest/UserGuide/schedule-types.html)。

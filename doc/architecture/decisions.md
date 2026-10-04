@@ -1,47 +1,51 @@
-# 技術上の意思決定と残課題
+# アーキテクチャの意思決定
 
-更新日：2026-10-03。業務の意思決定は [business](../business/decisions.md) を正とする。
+業務上の成立条件・料金・期限は[業務の意思決定](../business/decisions.md)で管理する。ここではシステム構造と運用の判断を定義する。
 
-## 合意した方針
+## 決定
 
 | ID | 決定 | 理由 |
 |---|---|---|
-| ARC-01 | DDD＋業務モジュール単位のモジュラーモノリス、内部はクリーンアーキテクチャ | 業務ルールを一箇所で持ち、実装技術と分けて変更する |
-| ARC-02 | 基幹BEを利用者・バックヤードで共有 | 同じ予約・割当・回収実績の二重管理を避ける |
-| ARC-03 | Flyway SQL→DB→jOOQ生成。ドメイン/API/DBモデルを分離 | DBと業務モデルの1対1対応を強制しない |
-| ARC-04 | 同じDBで更新/参照モデルを分ける | クライアント別表示を業務集約に押し込めない |
-| ARC-05 | 用途別OpenAPIとSDK/BE境界の生成 | 契約と公開範囲を明示し、言語間の接続を検証する |
-| ARC-06 | Spring Bootが入力スナップショットを渡しPythonが候補を返す | 計算中の予約変更を検知し、確定権限を基幹に置く |
-| OPS-01 | GitFlow、develop/v1、修正をmergeで戻す | 系列と公開履歴を管理し、共有履歴を書き換えない |
-| OPS-02 | コンポーネント独立版、契約互換性と公開状態を別記録 | 全アプリ同時更新を必須にしない |
-| OPS-03 | CIは検証/保存、CDは手動開始/自動実行 | 特定の検証済み成果物を公開する |
-| OPS-04 | 指定Push/PR条件、毎日05:00 JSTにdevelop/main CI | マージ後と定期の回帰を担保する |
-| OPS-05 | expand/contract、単一移行ジョブ、データ作業の区分 | 旧新ECSタスク共存と適用漏れに対応する |
-| QA-01 | 保証対象別試験、業務モジュール単位の部分実行 | 全体と部分を使い分け、業務の成立を確認する |
+| ARC-01 | DDD、モジュラーモノリス、モジュール内クリーンアーキテクチャ | 業務ルールを実装技術から分離 |
+| ARC-02 | 利用者・業者・管理者は共通基幹BEを利用 | 予約・割当・実績の正を一元化 |
+| ARC-03 | Flyway SQL → DB → jOOQ。ドメイン/API/DBモデルを分離 | DBとクラスの1対1対応を強制しない |
+| ARC-04 | 同じDBでcommandとqueryを分離 | 更新整合性とクライアント別表示を両立 |
+| ARC-05 | consumer / backyard / admin / optimizerのOpenAPI | 用途別の公開範囲・SDK・認可を明確化 |
+| ARC-06 | 基幹が入力を固定しPythonが候補計算 | 予約変更を検知し、採用を基幹で確定 |
+| ARC-07 | Service Connect内部REST。基幹の永続ジョブとステートレスoptimizer | 画面待ち・再起動復旧・計算負荷を分離 |
+| ARC-08 | 管理者Webをbackyardの独立featureに配置 | 同じ業務基盤で管理操作を提供 |
+| INF-01 | 東京、2AZ subnet、private ECS/Aurora、NAT経由の外向き通信 | 公開入口と内部通信を分離 |
+| INF-02 | 全クライアントのAPIをCloudFront → ALBへ統一 | WAF適用とorigin保護を統一 |
+| INF-03 | native ECS rolling、CodeDeployを使わない | Service Connectと整合する単純な更新方式 |
+| OPS-01 | 全repoの基準はdevelop/v1。GitFlow、mergeで修正反映 | 系列と公開履歴を管理 |
+| OPS-02 | コンポーネント独立版、互換性と公開状態を別記録 | 全アプリ同時更新を要求しない |
+| OPS-03 | CIは検証/保存、CDは手動開始/自動実行 | 検証した不変成果物を公開 |
+| OPS-04 | 指定Push/PR条件、05:00 JSTにdevelop/mainの日次CI | マージ後と定期の回帰確認 |
+| OPS-05 | expand/contract、専用単一migration job | 旧新ECSタスク共存とDB変更を両立 |
+| QA-01 | 保証対象別試験と業務モジュール別の部分実行 | 必要な範囲を独立して検証 |
 
-## 具体案・次回レビュー
+## 選定・数値確定が必要な事項
 
-| ID | 提案／確認事項 | 決定条件 |
+| ID | 項目 | 決める条件 |
 |---|---|---|
-| TECH-01 | Java 22から25 LTSへ移す案。Boot 3.5系を起点 | JDK/Gradle/Boot/jOOQの互換性・サポート期間・既存ビルドを確認 |
-| TECH-02 | Aurora PostgreSQL、dev 0〜2 / prod 0.5〜4 ACU案 | リージョン/エンジン対応、最小メモリ、負荷試験、再開待ち、予算 |
-| TECH-03 | iOSはhosted macOS第一案、AWS統一ならCodeBuild Mac | 頻度・費用・CodePipeline連携・署名・Xcode |
-| TECH-04 | Spring Modulith、フォルダ構成、生成物の配置 | 最初の予約ユースケースで境界/生成/試験を確認 |
-| TECH-05 | Terraform、IdP、秘密管理、ネットワーク | drawioとAWSアカウントの確定 |
-| TECH-06 | Python/uv/OR-Tools、移動時間データの提供元 | 車両制約・時間窓・ライセンス・費用・実測 |
-| TECH-07 | optimizer同期開始、長時間化時に永続ジョブ化 | 計算規模・HTTP上限・再試行・復旧 |
-| TECH-08 | Web公開方式のキャッシュ/旧資産互換性 | Flutter生成物で旧タブ・遅延読込・直接URLを試験 |
-| TECH-09 | モバイル旧版の対応期間と最低対応版 | 利用者更新率、運用負荷、API変更方針 |
-| TECH-10 | 公開前のRTO/RPO、reader/ECS複数タスク数 | 費用と停止許容を決定し復元/障害試験 |
+| TECH-01 | JDK LTS版とGradle / Boot / jOOQの組合せ | Java 25 LTSを起点に互換性、エディション、サポート期間を検証 |
+| TECH-02 | Aurora PostgreSQLのエンジン版 | 東京の対応、JDBC/Flyway/jOOQ、dev auto-pause条件 |
+| TECH-03 | iOSのmacOSランナー | hosted macOSとCodeBuild Macの費用、頻度、署名、CodePipeline連携 |
+| TECH-04 | IdPとWebセッション管理 | PKCE、管理者MFA、ログアウト、token/cookie保持 |
+| TECH-05 | ソルバーと移動行列提供元 | OR-Toolsを起点に制約・時間上限・ライセンス・費用を検証 |
+| TECH-06 | 決済・通知の提供元 | 業務フロー、sandbox、再送、費用 |
+| TECH-07 | モバイル旧版の対応期間 | 更新率、API維持費、最低版引上げ手順 |
+| TECH-08 | RTO/RPOと冗長化拡張 | writer/reader、ECSタスク、NATの停止影響・復元実測・予算 |
+| TECH-09 | AWSアカウント・ドメイン・リソース識別子 | dev/prodの配置と運用権限 |
 
-## 実装に向けた順序
+## 実装の順序
 
-1. 既存Q-01〜Q-09のうち、最初の予約フローに必要な条件を確定する。
-2. 技術スタックの版とGradle Wrapper、フォルダ、API生成を小さな疎通で確認する。
-3. 予約のユースケースをドメイン→Flyway→jOOQ→API→Flutterまで縦に通し、試験する。
-4. CIのトリガー・対象SHA・部分実行・日次・成果物保管を実装する。
-5. drawioを元にIaCとdevを構築し、DB移行・ECS/Web公開・復旧を試験する。
-6. モバイル署名/テスト配布、optimizerの制約・版検証、業務E2Eを順次追加する。
-7. 固有値を埋めたrunbookと公開記録を整えて本番へ進む。
+1. 最初の予約フローに必要なQ-01〜Q-09の業務条件を確定する。
+2. 依存の版、Wrapper、モジュール境界、OpenAPI生成を設定する。
+3. 予約をドメイン → Flyway → jOOQ → API → Flutterまで接続し、試験する。
+4. CIのトリガー、対象SHA、日次、成果物保管を構築する。
+5. AWSのdevを構築し、DB変更・ECS/Web公開・復旧を通す。
+6. 管理者画面、最適化ジョブ、モバイル署名・配布を接続する。
+7. 本番識別子、復元結果、公開記録を揃えて本番運用を開始する。
 
-今回の文書整備で上記の実装済みステータスを進めた扱いにはしない。
+実装の進捗は[実装状況](../process/implementation-status.md)を更新する。

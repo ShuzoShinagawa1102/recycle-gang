@@ -1,6 +1,6 @@
-# モバイルのビルド・配布基盤案
+# モバイルのビルド・配布基盤
 
-更新日：2026-10-03。FlutterモバイルもCI/CD対象。CI実行サービスの選定は提案で、未構築。
+FlutterモバイルもCI/CD対象とする。macOSランナーの選定は[TECH-03](../decisions.md)で管理する。
 
 ## ECSをCI用に用意するか
 
@@ -14,7 +14,7 @@
 
 CodePipelineを全体の起点とする方針は維持する。Actionsを選ぶ場合は、CodePipeline側の連携アダプターからworkflow_dispatchで固定SHA/ビルドID/環境を渡し、同じSHAの結果・成果物ハッシュ・実行IDを照合して完了させる案。単純に別のPushトリガーを足して二重ビルドしない。これは組込み済みの標準機能としてではなく、実装・検証が必要な連携案として扱う。
 
-macOS/Xcode/Flutter/CocoaPods等の版を固定し、更新PRで確認する。iOSのランナーが決まるまで、iOS試験・署名ビルド済みと表示しない。
+macOS/Xcode/Flutter/CocoaPods等の版を固定し、更新PRで確認する。
 
 ## 配布までの境界
 
@@ -29,7 +29,7 @@ macOS/Xcode/Flutter/CocoaPods等の版を固定し、更新PRで確認する。i
 
 ## 環境・署名・版
 
-- consumer/backyardを別アプリIDとして管理し、さらにdev/prodのflavorと接続先を分ける案。識別子の実値は未決。
+- consumer/backyardを別アプリIDとして管理し、さらにdev/prodのflavorと接続先を分ける。アプリ識別子は環境設定で管理する。
 - dev用バイナリをそのままprodへ昇格しない。本番用flavor/署名/設定で作った成果物をテスト配布し、同じビルドを本番へ昇格させる。
 - iOSのversion/build number、AndroidのversionName/versionCode、Git SHA、設定ハッシュ、契約版を対応づける。
 - 署名証明書、provisioning profile、keystore、ストアAPI資格情報は安全な保管先から取得し、PR実行へ渡さない。

@@ -1,6 +1,6 @@
 # 試験方針
 
-更新日：2026-10-03。保証対象別の試験と業務モジュール単位の部分実行は合意済み。下記タスク名は実装予定であり、現在実行可能とは限らない。
+更新日：2026-10-03。保証対象と業務モジュールを指定して部分実行できる試験構成とする。
 
 ## 保証対象
 
@@ -11,7 +11,7 @@
 | DB結合 | SQL、保存/再取得、制約、トランザクション | 保存漏れ、排他、重複割当 | persistenceアダプター |
 | モジュール結合 | その業務モジュール内の一連の振る舞い | 予約受付、募集承諾 | reservation/dispatch等 |
 | アーキテクチャ | 層・モジュール境界 | 循環依存、他モジュール内部参照 | BE全体 |
-| 契約 | OpenAPIと実装/SDKの一致・互換性 | JSON、エラー、認可、古いSDK | consumer/backyard/optimizer |
+| 契約 | OpenAPIと実装/SDKの一致・互換性 | JSON、エラー、認可、古いSDK | consumer/backyard/admin/optimizer |
 | DB移行 | 初期構築と既存データを保った更新 | 旧版→新版、移行途中、旧アプリ互換性 | リリース対象SQL |
 | 最適化 | 制約充足と採用条件 | 容量/時間窓、未割当、stale、再送 | solver/基幹連携 |
 | Flutter | 表示・入力・画面状態・操作 | 空/読込中/失敗、権限別画面 | widget/機能 |
@@ -19,10 +19,10 @@
 
 全メソッド・getterを機械的にテストすることを目標にしない。要件/業務ルールIDと試験の対応を記録する。Q-01〜Q-09の未決条件は勝手な期待値で固定しない。
 
-## 部分実行の仕様案
+## 部分実行の仕様
 
 - JUnitタグをunit / integration / contract / migration / architectureに分類し、moduleも指定可能にする。
-- Gradleタスク案：test、integrationTest、contractTest、migrationTest、architectureTest。モジュール指定例の目標は`-Pmodule=reservation`。タスク実装時に使えるコマンドをREADMEへ記載する。
+- Gradleタスク：test、integrationTest、contractTest、migrationTest、architectureTest。モジュール指定例の目標は`-Pmodule=reservation`。タスク実装時に使えるコマンドをREADMEへ記載する。
 - Spring Modulithの`@ApplicationModuleTest`で対象と必要な依存だけを起動する。外部の決済/通知は制御可能な代替実装を使う。
 - Flutterはtest/widgetとintegration_test、Pythonはpytestの単体/solver/API分類を用意する。
 - 部分試験の成功は全体成功を意味しない。公開契約・共通要素・DB変更は関連モジュールも試験する。
@@ -55,3 +55,12 @@ DB結合は同種・対象メジャーのPostgreSQLをTestcontainers等で起動
 - Web更新時に旧HTML/資産キャッシュの組合せで壊れない。
 
 公式資料：[Spring Modulith試験](https://docs.spring.io/spring-modulith/reference/testing.html)。関連：[DB変更](../architecture/backend/database-change-policy.md)、[CI/CD](ci-cd-policy.md)。
+
+
+## 管理者と最適化の結合試験
+
+- 業者tokenでadmin APIを呼んでも操作できない。管理者の操作別権限と監査記録を確認する。
+- optimizerのサービスキー不正、過負荷429、切断、時間上限、タスク再起動を再現する。
+- 基幹ワーカーの停止後にlease切れジョブを回収し、旧worker tokenの遅延結果を拒否する。
+- 計算中・採用直前の予約/車両/割当変更で409となる。複数scopeと同時採用でも検証する。
+- 同じ採用要求の再送で計画が二重作成されない。ジョブ成功と候補採用を分けて検証する。
