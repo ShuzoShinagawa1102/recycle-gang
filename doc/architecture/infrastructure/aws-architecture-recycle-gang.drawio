@@ -1,0 +1,713 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-10-04T00:20:00Z" agent="Recycle Gang architecture review" version="24.7.17" type="device">
+  <diagram id="runtime" name="01 公開・業務通信">
+    <mxGraphModel dx="1600" dy="1280" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1280" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Recycle Gang | AWS システム構成" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=29;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="32" y="24" width="1536" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="東京リージョン / 環境ごとに分離した VPC・DB・秘密情報 / 2026-10-04 改訂" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="34" y="72" width="1532" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="aws" value="AWS Cloud" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#FFFFFF;strokeColor=#788DA8;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="300" y="116" width="1260" height="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="global" value="グローバル：配信・DNS・入口保護" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F4F0FA;strokeColor=#AE99CC;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="aws">
+          <mxGeometry x="20.0" y="36.0" width="1220" height="184" as="geometry" />
+        </mxCell>
+        <mxCell id="tokyo" value="東京リージョン  ap-northeast-1" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F9FBFE;strokeColor=#65A0B6;strokeWidth=1.3;dashed=1;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="aws">
+          <mxGeometry x="20.0" y="244.0" width="1220" height="734" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc" value="VPC" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#FFFFFF;strokeColor=#8D6BC4;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="tokyo">
+          <mxGeometry x="20.0" y="130.0" width="1180" height="580" as="geometry" />
+        </mxCell>
+        <mxCell id="az-a" value="Availability Zone A" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#FAFCFE;strokeColor=#96B0CE;strokeWidth=1.3;dashed=1;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="vpc">
+          <mxGeometry x="20.0" y="46.0" width="560" height="514" as="geometry" />
+        </mxCell>
+        <mxCell id="public-a" value="Public subnet" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#EFF7E9;strokeColor=#91AC76;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="az-a">
+          <mxGeometry x="18.0" y="44.0" width="524" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="app-a" value="Private app subnet" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#ECF6FC;strokeColor=#79AAC9;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="az-a">
+          <mxGeometry x="18.0" y="182.0" width="524" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="db-a" value="Private DB subnet" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F5EEFA;strokeColor=#AC91C2;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="az-a">
+          <mxGeometry x="18.0" y="370.0" width="524" height="122" as="geometry" />
+        </mxCell>
+        <mxCell id="az-c" value="Availability Zone C" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#FAFCFE;strokeColor=#96B0CE;strokeWidth=1.3;dashed=1;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="vpc">
+          <mxGeometry x="600.0" y="46.0" width="560" height="514" as="geometry" />
+        </mxCell>
+        <mxCell id="public-c" value="Public subnet" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#EFF7E9;strokeColor=#91AC76;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="az-c">
+          <mxGeometry x="18.0" y="44.0" width="524" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="app-c" value="Private app subnet" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#ECF6FC;strokeColor=#79AAC9;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="az-c">
+          <mxGeometry x="18.0" y="182.0" width="524" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="db-c" value="Private DB subnet" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F5EEFA;strokeColor=#AC91C2;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="az-c">
+          <mxGeometry x="18.0" y="370.0" width="524" height="122" as="geometry" />
+        </mxCell>
+        <mxCell id="route53" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#7952B3;strokeWidth=1.6;" vertex="1" parent="global">
+          <mxGeometry x="26.0" y="64.0" width="215" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="route53-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.route_53;fillColor=#7952B3;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="route53">
+          <mxGeometry x="14.0" y="20.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="route53-title" value="Route 53" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="route53">
+          <mxGeometry x="62.0" y="11.0" width="143" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="route53-detail" value="DNS レコード" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="route53">
+          <mxGeometry x="62.0" y="37.0" width="143" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="cf" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#7952B3;strokeWidth=1.6;" vertex="1" parent="global">
+          <mxGeometry x="290.0" y="64.0" width="270" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="cf-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.cloudfront;fillColor=#7952B3;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="cf">
+          <mxGeometry x="14.0" y="20.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="cf-title" value="CloudFront" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="cf">
+          <mxGeometry x="62.0" y="11.0" width="198" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="cf-detail" value="Web + 全クライアントのAPI" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="cf">
+          <mxGeometry x="62.0" y="37.0" width="198" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="waf" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#C7445A;strokeWidth=1.6;" vertex="1" parent="global">
+          <mxGeometry x="620.0" y="64.0" width="270" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="waf-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.waf;fillColor=#C7445A;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="waf">
+          <mxGeometry x="14.0" y="20.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="waf-title" value="WAF Web ACL" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="waf">
+          <mxGeometry x="62.0" y="11.0" width="198" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="waf-detail" value="CloudFrontへ関連付け" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="waf">
+          <mxGeometry x="62.0" y="37.0" width="198" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="cert-cf" value="CloudFront証明書&#10;ACM / us-east-1" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="global">
+          <mxGeometry x="940.0" y="73.0" width="238" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#6C9235;strokeWidth=1.6;" vertex="1" parent="tokyo">
+          <mxGeometry x="35.0" y="45.0" width="300" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;fillColor=#6C9235;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="s3">
+          <mxGeometry x="14.0" y="15.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-title" value="S3：Web公開先" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="s3">
+          <mxGeometry x="62.0" y="11.0" width="228" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-detail" value="非公開 / REST endpoint / OAC" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="s3">
+          <mxGeometry x="62.0" y="37.0" width="228" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="api-policy" value="/api/* → ALB：キャッシュ無効&#10;Authorization・必要cookie/queryを転送" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#172B4D;fontStyle=0;spacing=0;" vertex="1" parent="tokyo">
+          <mxGeometry x="460.0" y="42.0" width="372" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="tls-alb" value="ALB証明書&#10;ACM / 東京" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="tokyo">
+          <mxGeometry x="940.0" y="50.0" width="220" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="alb-a" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#7952B3;strokeWidth=1.6;" vertex="1" parent="public-a">
+          <mxGeometry x="16.0" y="41.0" width="266" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="alb-a-title" value="ALB：AZ-A側" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="alb-a">
+          <mxGeometry x="16.0" y="11.0" width="240" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="alb-a-detail" value="同じ1つのALBを2AZに配置" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="alb-a">
+          <mxGeometry x="16.0" y="37.0" width="240" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="nat" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#B56A16;strokeWidth=1.6;" vertex="1" parent="public-a">
+          <mxGeometry x="322.0" y="41.0" width="188" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="nat-title" value="NAT Gateway" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="nat">
+          <mxGeometry x="16.0" y="11.0" width="162" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="nat-detail" value="外向き経路は2ページ目" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="nat">
+          <mxGeometry x="16.0" y="37.0" width="162" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="alb-c" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#7952B3;strokeWidth=1.6;" vertex="1" parent="public-c">
+          <mxGeometry x="16.0" y="41.0" width="266" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="alb-c-title" value="ALB：AZ-C側" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="alb-c">
+          <mxGeometry x="16.0" y="11.0" width="240" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="alb-c-detail" value="CloudFrontからHTTPS" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="alb-c">
+          <mxGeometry x="16.0" y="37.0" width="240" height="16" as="geometry" />
+        </mxCell>
+        <mxCell id="core" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#C77521;strokeWidth=1.6;" vertex="1" parent="app-a">
+          <mxGeometry x="16.0" y="61.0" width="210" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="core-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;fillColor=#C77521;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="core">
+          <mxGeometry x="14.0" y="20.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="core-title" value="基幹 ECS" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="core">
+          <mxGeometry x="62.0" y="11.0" width="138" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="core-detail" value="Spring Boot / Fargate" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="core">
+          <mxGeometry x="62.0" y="37.0" width="138" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="opt" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#C77521;strokeWidth=1.6;" vertex="1" parent="app-a">
+          <mxGeometry x="304.0" y="61.0" width="210" height="76" as="geometry" />
+        </mxCell>
+        <mxCell id="opt-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;fillColor=#C77521;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="opt">
+          <mxGeometry x="14.0" y="20.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="opt-title" value="最適化 ECS" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="opt">
+          <mxGeometry x="62.0" y="11.0" width="138" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="opt-detail" value="FastAPI / Fargate" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="opt">
+          <mxGeometry x="62.0" y="37.0" width="138" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="app-placement" value="ECSの配置先サブネット&#10;最小構成は基幹1・最適化1 task&#10;図はAZ-Aへの配置例" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="app-c">
+          <mxGeometry x="30.0" y="44.0" width="470" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="aurora" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#A046AC;strokeWidth=1.6;" vertex="1" parent="db-a">
+          <mxGeometry x="16.0" y="44.0" width="320" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="aurora-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.aurora;fillColor=#A046AC;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="aurora">
+          <mxGeometry x="14.0" y="13.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="aurora-title" value="Aurora Serverless v2" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="aurora">
+          <mxGeometry x="62.0" y="11.0" width="248" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="aurora-detail" value="PostgreSQL互換 / writer 1" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="aurora">
+          <mxGeometry x="62.0" y="37.0" width="248" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="db-placement" value="DB subnet groupに含める&#10;readerは追加時に配置" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="db-c">
+          <mxGeometry x="30.0" y="45.0" width="465" height="58" as="geometry" />
+        </mxCell>
+        <mxCell id="consumer" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#2167C9;strokeWidth=1.6;" vertex="1" parent="1">
+          <mxGeometry x="32" y="246" width="230" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="consumer-title" value="利用者" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="consumer">
+          <mxGeometry x="16.0" y="11.0" width="204" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="consumer-detail" value="Flutter / iOS・Android&#10;consumer API" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="consumer">
+          <mxGeometry x="16.0" y="37.0" width="204" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="provider" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#2167C9;strokeWidth=1.6;" vertex="1" parent="1">
+          <mxGeometry x="32" y="428" width="230" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="provider-title" value="業者" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="provider">
+          <mxGeometry x="16.0" y="11.0" width="204" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="provider-detail" value="Flutter / Web・iOS・Android&#10;backyard API" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="provider">
+          <mxGeometry x="16.0" y="37.0" width="204" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="admin" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#2167C9;strokeWidth=1.6;" vertex="1" parent="1">
+          <mxGeometry x="32" y="612" width="230" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-title" value="管理者" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="admin">
+          <mxGeometry x="16.0" y="11.0" width="204" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="admin-detail" value="backyard内のFlutter Web&#10;admin API・操作別権限" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="admin">
+          <mxGeometry x="16.0" y="37.0" width="204" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="dns" source="route53" target="cf" value="DNS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#7952B3;strokeColor=#7952B3;strokeWidth=2;endArrow=open;endFill=1;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="waf-association" source="waf" target="cf" value="関連付け" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#7952B3;strokeColor=#7952B3;strokeWidth=2;endArrow=none;endFill=1;dashed=1;exitX=0;exitY=0.5;entryX=1;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="in-consumer" source="consumer" target="cf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.65;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="282" y="294" />
+              <mxPoint x="282" y="314" />
+              <mxPoint x="590" y="314" />
+              <mxPoint x="590" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in-provider" source="provider" target="cf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.65;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="282" y="476" />
+              <mxPoint x="282" y="314" />
+              <mxPoint x="590" y="314" />
+              <mxPoint x="590" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="in-admin" source="admin" target="cf" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.65;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="282" y="660" />
+              <mxPoint x="282" y="314" />
+              <mxPoint x="590" y="314" />
+              <mxPoint x="590" y="265" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="https" value="HTTPS" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#2167C9;fontStyle=0;spacing=0;" vertex="1" parent="global">
+          <mxGeometry x="182.0" y="148.0" width="88" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="cf-static" source="cf" target="s3" value="静的資産 / OAC" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=0.33;exitY=1;entryX=0.95;entryY=0;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="700" y="348" />
+              <mxPoint x="640" y="348" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cf-api-a" source="cf" target="alb-a" value="/api/* / HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=0.5;exitY=1;entryX=0.95;entryY=0;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="745" y="466" />
+              <mxPoint x="647" y="466" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="cf-api-c" source="cf" target="alb-c" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=0.88;exitY=1;entryX=0.95;entryY=0;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="849" y="346" />
+              <mxPoint x="1230" y="346" />
+              <mxPoint x="1230" y="472" />
+              <mxPoint x="1227" y="472" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alb-core-a" source="alb-a" target="core" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="527" y="706" />
+              <mxPoint x="499" y="706" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="alb-core-c" source="alb-c" target="core" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=0.5;exitY=1;entryX=0.6;entryY=0;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1107" y="706" />
+              <mxPoint x="650" y="706" />
+              <mxPoint x="650" y="756" />
+              <mxPoint x="520" y="756" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="core-opt" source="core" target="opt" value="REST&#10;8000" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="sc-label" value="ECS Service Connect" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontColor=#2167C9;fontStyle=0;spacing=0;" vertex="1" parent="az-a">
+          <mxGeometry x="310.0" y="343.0" width="240" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="core-db" source="core" target="aurora" value="TLS / 5432" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=0.85;exitY=1;entryX=0.65;entryY=0;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="573" y="892" />
+              <mxPoint x="602" y="892" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="rules" value="接続と権限" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F1F6FE;strokeColor=#B9CEE7;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="32" y="1150" width="735" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="rules-body" value="ALB：CloudFront prefix list + 秘密origin headerで制限&#10;最適化：基幹SGのみ許可 / サービス認証 / 業務DBへ接続しない" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#172B4D;fontStyle=0;spacing=0;" vertex="1" parent="rules">
+          <mxGeometry x="18.0" y="40.0" width="704" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="scale" value="構成の読み方" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F5F3F9;strokeColor=#C9BDD8;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="790" y="1150" width="770" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="scale-body" value="2AZサブネットと、task・reader・NATの冗長化は別&#10;実線＝通信 / 破線＝DNS・関連付け / CI・公開は3ページ目" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#172B4D;fontStyle=0;spacing=0;" vertex="1" parent="scale">
+          <mxGeometry x="18.0" y="40.0" width="736" height="45" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="egress" name="02 外向き通信">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Private subnet | 外向き通信と運用接続" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=29;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="32" y="24" width="1536" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="ECSはpublic IPなし / NATは各環境1台 / DB subnetにインターネット向けdefault routeを置かない" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="34" y="72" width="1532" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="vpc" value="東京リージョンのVPC" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F9FBFE;strokeColor=#8D6BC4;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="1040" height="672" as="geometry" />
+        </mxCell>
+        <mxCell id="private" value="Private app subnet：両AZ" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#ECF6FC;strokeColor=#79AAC9;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="vpc">
+          <mxGeometry x="28.0" y="68.0" width="392" height="412" as="geometry" />
+        </mxCell>
+        <mxCell id="public" value="Public subnet：AZ-A" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#EFF7E9;strokeColor=#91AC76;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="vpc">
+          <mxGeometry x="560.0" y="68.0" width="420" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="core" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#C77521;strokeWidth=1.6;" vertex="1" parent="private">
+          <mxGeometry x="28.0" y="88.0" width="334" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="core-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;fillColor=#C77521;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="core">
+          <mxGeometry x="14.0" y="28.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="core-title" value="基幹 ECS" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="core">
+          <mxGeometry x="62.0" y="11.0" width="262" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="core-detail" value="DB・外部API・運用サービス" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="core">
+          <mxGeometry x="62.0" y="37.0" width="262" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="opt" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#C77521;strokeWidth=1.6;" vertex="1" parent="private">
+          <mxGeometry x="28.0" y="252.0" width="334" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="opt-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;fillColor=#C77521;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="opt">
+          <mxGeometry x="14.0" y="28.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="opt-title" value="最適化 ECS" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="opt">
+          <mxGeometry x="62.0" y="11.0" width="262" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="opt-detail" value="計算・ログ・秘密取得" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="opt">
+          <mxGeometry x="62.0" y="37.0" width="262" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="nat" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#B56A16;strokeWidth=1.6;" vertex="1" parent="public">
+          <mxGeometry x="26.0" y="86.0" width="366" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="nat-title" value="NAT Gateway" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="nat">
+          <mxGeometry x="16.0" y="11.0" width="340" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="nat-detail" value="両AZ app subnetの外向き経路" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="nat">
+          <mxGeometry x="16.0" y="37.0" width="340" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="igw" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#B56A16;strokeWidth=1.6;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="294" width="200" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="igw-title" value="Internet Gateway" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="igw">
+          <mxGeometry x="16.0" y="11.0" width="174" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="igw-detail" value="VPCに関連付け" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="igw">
+          <mxGeometry x="16.0" y="37.0" width="174" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="dest" value="HTTPS接続先" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#FFF8EF;strokeColor=#D9AC71;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="196" width="224" height="354" as="geometry" />
+        </mxCell>
+        <mxCell id="aws-api" value="AWS API&#10;ECR image取得&#10;Secrets Manager&#10;CloudWatch Logs&#10;&#10;外部サービス&#10;決済・地図・通知" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=0;spacing=0;" vertex="1" parent="dest">
+          <mxGeometry x="18.0" y="48.0" width="189" height="279" as="geometry" />
+        </mxCell>
+        <mxCell id="endpoint" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#25805A;strokeWidth=1.6;" vertex="1" parent="vpc">
+          <mxGeometry x="560.0" y="422.0" width="420" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="endpoint-title" value="S3 Gateway endpoint" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="endpoint">
+          <mxGeometry x="16.0" y="11.0" width="394" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="endpoint-detail" value="両AZ app subnetのroute tableに関連付け" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="endpoint">
+          <mxGeometry x="16.0" y="37.0" width="394" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#6C9235;strokeWidth=1.6;" vertex="1" parent="1">
+          <mxGeometry x="1110" y="564" width="324" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;fillColor=#6C9235;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="s3">
+          <mxGeometry x="14.0" y="26.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-title" value="S3" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="s3">
+          <mxGeometry x="62.0" y="11.0" width="252" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="s3-detail" value="ECRのimage layer等" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="s3">
+          <mxGeometry x="62.0" y="37.0" width="252" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="db" value="Private DB subnet：両AZ" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F5EEFA;strokeColor=#AC91C2;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="vpc">
+          <mxGeometry x="28.0" y="545.0" width="952" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="db-policy" value="基幹・専用migration taskからの5432のみ許可 / DB用SG・権限を分離" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=0;spacing=0;" vertex="1" parent="db">
+          <mxGeometry x="20.0" y="43.0" width="908" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="core-nat" source="core" target="nat" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#B56A16;strokeColor=#B56A16;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="520" y="342" />
+              <mxPoint x="520" y="336" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="opt-nat" source="opt" target="nat" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#B56A16;strokeColor=#B56A16;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.72;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="506" />
+              <mxPoint x="540" y="354" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="nat-igw" source="nat" target="igw" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#B56A16;strokeColor=#B56A16;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="igw-dest" source="igw" target="dest" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#B56A16;strokeColor=#B56A16;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs-endpoint" source="opt" target="endpoint" value="S3向け経路" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.75;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="516" y="506" />
+              <mxPoint x="516" y="606" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="core-endpoint" source="core" target="endpoint" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.78;entryX=0;entryY=0.7;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="365" />
+              <mxPoint x="480" y="670" />
+              <mxPoint x="580" y="670" />
+              <mxPoint x="580" y="623" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="endpoint-s3" source="endpoint" target="s3" value="private接続" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="availability" value="運用上の扱い" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#FFF8EF;strokeColor=#D9AC71;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="40" y="848" width="740" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="nat-note" value="NATは最小構成として1台。配置AZの障害時は外向き通信が停止する。&#10;外部HTTPSへはNATを使い、VPC endpointだけで代替しない。" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=15;fontColor=#172B4D;fontStyle=0;spacing=0;" vertex="1" parent="availability">
+          <mxGeometry x="20.0" y="46.0" width="700" height="53" as="geometry" />
+        </mxCell>
+        <mxCell id="access" value="権限と経路" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F1F6FE;strokeColor=#B9CEE7;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="804" y="848" width="760" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="access-note" value="ECR・Secrets・Logsへの到達をtask起動時から確保する。&#10;execution role / app task role / migration権限を分ける。" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=15;fontColor=#172B4D;fontStyle=0;spacing=0;" vertex="1" parent="access">
+          <mxGeometry x="20.0" y="46.0" width="720" height="53" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="delivery" name="03 CI・CD">
+    <mxGraphModel dx="1600" dy="1150" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1150" math="0" shadow="0" background="#FFFFFF">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="title" value="Build → Store → Release | CIとCDの境界" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=29;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="32" y="24" width="1536" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="CIは検証と不変成果物の保存 / CDは人が版・環境を選び開始 / 公開状態をコンポーネント・配布先別に記録" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=14;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="34" y="72" width="1532" height="28" as="geometry" />
+        </mxCell>
+        <mxCell id="ci" value="CI：検証・ビルド・保管" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F2F7FE;strokeColor=#9FBFE3;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="40" y="134" width="1520" height="468" as="geometry" />
+        </mxCell>
+        <mxCell id="git" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#172B4D;strokeWidth=1.6;" vertex="1" parent="ci">
+          <mxGeometry x="28.0" y="120.0" width="260" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="git-title" value="GitHub" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="git">
+          <mxGeometry x="16.0" y="11.0" width="234" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="git-detail" value="develop/v1を開発基準にする" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="git">
+          <mxGeometry x="16.0" y="37.0" width="234" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="pipeline" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#7952B3;strokeWidth=1.6;" vertex="1" parent="ci">
+          <mxGeometry x="338.0" y="120.0" width="280" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="pipeline-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codepipeline;fillColor=#7952B3;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="pipeline">
+          <mxGeometry x="14.0" y="26.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="pipeline-title" value="CodePipeline" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="pipeline">
+          <mxGeometry x="62.0" y="11.0" width="208" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="pipeline-detail" value="対象SHAとコンポーネントを固定" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="pipeline">
+          <mxGeometry x="62.0" y="37.0" width="208" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="build" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#7952B3;strokeWidth=1.6;" vertex="1" parent="ci">
+          <mxGeometry x="680.0" y="78.0" width="350" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="build-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.codebuild;fillColor=#7952B3;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="build">
+          <mxGeometry x="14.0" y="28.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="build-title" value="CodeBuild" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="build">
+          <mxGeometry x="62.0" y="11.0" width="278" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="build-detail" value="Java・Python・Flutter Web / Android" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="build">
+          <mxGeometry x="62.0" y="37.0" width="278" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="mac" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#7952B3;strokeWidth=1.6;" vertex="1" parent="ci">
+          <mxGeometry x="680.0" y="310.0" width="350" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="mac-title" value="macOS + Xcode" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="mac">
+          <mxGeometry x="16.0" y="11.0" width="324" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="mac-detail" value="Flutter iOS / 専用ビルド環境" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="mac">
+          <mxGeometry x="16.0" y="37.0" width="324" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#C77521;strokeWidth=1.6;" vertex="1" parent="ci">
+          <mxGeometry x="1136.0" y="70.0" width="352" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecr;fillColor=#C77521;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="ecr">
+          <mxGeometry x="14.0" y="21.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr-title" value="ECR" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="ecr">
+          <mxGeometry x="62.0" y="11.0" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ecr-detail" value="コンテナ / image digest" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="ecr">
+          <mxGeometry x="62.0" y="37.0" width="280" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ci-s3" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#6C9235;strokeWidth=1.6;" vertex="1" parent="ci">
+          <mxGeometry x="1136.0" y="204.0" width="352" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="ci-s3-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;fillColor=#6C9235;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="ci-s3">
+          <mxGeometry x="14.0" y="21.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ci-s3-title" value="CI保管S3" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="ci-s3">
+          <mxGeometry x="62.0" y="11.0" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ci-s3-detail" value="Web build/web / checksum" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="ci-s3">
+          <mxGeometry x="62.0" y="37.0" width="280" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="mobile" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#2167C9;strokeWidth=1.6;" vertex="1" parent="ci">
+          <mxGeometry x="1136.0" y="338.0" width="352" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="mobile-title" value="モバイル成果物" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="mobile">
+          <mxGeometry x="16.0" y="11.0" width="326" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="mobile-detail" value="署名・build番号・checksum" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="mobile">
+          <mxGeometry x="16.0" y="37.0" width="326" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="git-pipeline" source="git" target="pipeline" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="pipeline-build" source="pipeline" target="build" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="686" y="298" />
+              <mxPoint x="686" y="258" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="pipeline-mac" source="pipeline" target="mac" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.72;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="686" y="318" />
+              <mxPoint x="686" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="build-ecr" source="build" target="ecr" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1110" y="242" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="build-s3" source="build" target="ci-s3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.7;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1122" y="275" />
+              <mxPoint x="1122" y="377" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="build-android" source="build" target="mobile" value="Android" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.9;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1090" y="294" />
+              <mxPoint x="1090" y="562" />
+              <mxPoint x="1144" y="562" />
+              <mxPoint x="1144" y="511" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="mac-ios" source="mac" target="mobile" value="iOS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#2167C9;strokeColor=#2167C9;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ios-note" value="macOSランナーは別途選定。CI用ECSは設けない。" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="ci">
+          <mxGeometry x="680.0" y="422.0" width="420" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="cd" value="CD：手動開始・検証済み成果物の公開" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=5;fillColor=#F0F8F3;strokeColor=#96BDA4;strokeWidth=1.3;dashed=0;align=left;verticalAlign=top;spacingTop=12;spacingLeft=16;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="40" y="640" width="1520" height="426" as="geometry" />
+        </mxCell>
+        <mxCell id="manual" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#25805A;strokeWidth=1.6;" vertex="1" parent="cd">
+          <mxGeometry x="28.0" y="132.0" width="270" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="manual-title" value="手動開始" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="manual">
+          <mxGeometry x="16.0" y="11.0" width="244" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="manual-detail" value="環境・版・digest / checksumを選択" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="manual">
+          <mxGeometry x="16.0" y="37.0" width="244" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gate" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#25805A;strokeWidth=1.6;" vertex="1" parent="cd">
+          <mxGeometry x="346.0" y="132.0" width="306" height="92" as="geometry" />
+        </mxCell>
+        <mxCell id="gate-title" value="成果物・互換性の確認" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="gate">
+          <mxGeometry x="16.0" y="11.0" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="gate-detail" value="CI結果 / hash / DB移行 / 復旧先" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="gate">
+          <mxGeometry x="16.0" y="37.0" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#C77521;strokeWidth=1.6;" vertex="1" parent="cd">
+          <mxGeometry x="712.0" y="66.0" width="352" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.ecs;fillColor=#C77521;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="ecs">
+          <mxGeometry x="14.0" y="26.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs-title" value="ECSへ反映" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="ecs">
+          <mxGeometry x="62.0" y="11.0" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="ecs-detail" value="native rolling / DB移行は単一task" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="ecs">
+          <mxGeometry x="62.0" y="37.0" width="280" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="public-s3" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#6C9235;strokeWidth=1.6;" vertex="1" parent="cd">
+          <mxGeometry x="1136.0" y="66.0" width="352" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="public-s3-icon" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.s3;fillColor=#6C9235;strokeColor=#FFFFFF;aspect=fixed;" vertex="1" parent="public-s3">
+          <mxGeometry x="14.0" y="26.0" width="36" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="public-s3-title" value="公開S3 → CloudFront" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="public-s3">
+          <mxGeometry x="62.0" y="11.0" width="280" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="public-s3-detail" value="Web資産反映 / cache無効化・確認" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="public-s3">
+          <mxGeometry x="62.0" y="37.0" width="280" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="store-test" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#2167C9;strokeWidth=1.6;" vertex="1" parent="cd">
+          <mxGeometry x="712.0" y="290.0" width="352" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="store-test-title" value="TestFlight / Play内部テスト" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="store-test">
+          <mxGeometry x="16.0" y="11.0" width="326" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="store-test-detail" value="本番用ビルドを検証して審査へ提出" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="store-test">
+          <mxGeometry x="16.0" y="37.0" width="326" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="store-release" value="" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;container=1;collapsible=0;rounded=1;arcSize=10;fillColor=#FFFFFF;strokeColor=#2167C9;strokeWidth=1.6;" vertex="1" parent="cd">
+          <mxGeometry x="1136.0" y="290.0" width="352" height="88" as="geometry" />
+        </mxCell>
+        <mxCell id="store-release-title" value="ストア公開" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=16;fontColor=#172B4D;fontStyle=1;spacing=0;" vertex="1" parent="store-release">
+          <mxGeometry x="16.0" y="11.0" width="326" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="store-release-detail" value="審査 → 人が公開選択 → 利用者が更新" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="store-release">
+          <mxGeometry x="16.0" y="37.0" width="326" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="manual-gate" source="manual" target="gate" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gate-ecs" source="gate" target="ecs" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.35;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="804" />
+              <mxPoint x="720" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gate-web" source="gate" target="public-s3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=0.8;exitY=1;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="631" y="888" />
+              <mxPoint x="1140" y="888" />
+              <mxPoint x="1140" y="750" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gate-mobile" source="gate" target="store-test" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.8;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="720" y="846" />
+              <mxPoint x="720" y="974" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="test-release" source="store-test" target="store-release" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=0;fontFamily=Noto Sans CJK JP;fontSize=12;fontColor=#25805A;strokeColor=#25805A;strokeWidth=2;endArrow=block;endFill=1;dashed=0;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#FFFFFF;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="server-note" value="基幹・optimizerは独立版。CodeDeployは使わない。" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="cd">
+          <mxGeometry x="712.0" y="170.0" width="360" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="web-note" value="CI保管S3と公開S3を分離する。" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=13;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="cd">
+          <mxGeometry x="1136.0" y="170.0" width="352" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="footer" value="日次CI：develop系・mainを毎日05:00 JST / 日次CDなし / PRへ本番公開・署名の権限を渡さない" style="html=0;fontFamily=Noto Sans CJK JP;fontSize=15;fontColor=#172B4D;whiteSpace=wrap;text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;fontSize=12;fontColor=#526581;fontStyle=0;spacing=0;" vertex="1" parent="1">
+          <mxGeometry x="34" y="1090" width="1532" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

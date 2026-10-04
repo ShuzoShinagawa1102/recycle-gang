@@ -1,5 +1,7 @@
 # AWSアーキテクチャ
 
+[編集可能なdrawio構成図](aws-architecture-recycle-gang.drawio)：公開・業務通信、外向き通信、CI/CDの3ページ。
+
 東京リージョン`ap-northeast-1`を使用する。devとprodはVPC、ECS、Aurora、S3、秘密情報、IAM、ログを分離する。CloudFrontとRoute 53はリージョン外のグローバルサービスとして扱う。
 
 ## 配信と業務通信

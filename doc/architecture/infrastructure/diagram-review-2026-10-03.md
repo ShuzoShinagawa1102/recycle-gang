@@ -28,9 +28,11 @@ ALBへ直接接続する経路を将来追加する場合、その経路にもre
 - AuroraのACUスケールと、ECSタスク数・reader・NATの冗長化を区別する。
 - CloudFront用ACM証明書と、東京ALB用ACM証明書を配置する。
 
-## 提出図
+## 修正版と提出原本
 
-提出時の原本を保存する。上記の指摘は原本に反映済みという意味ではなく、改訂時の変更一覧である。
+[修正版drawio](aws-architecture-recycle-gang.drawio)に、レビュー事項を反映した。公開・業務通信、外向き通信、CI/CDの3ページで構成し、図形・文字・接続線を編集できる。
+
+以下は提出時の原本として保存する。
 
 [drawio原本](reviews/2026-10-03/aws-architecture-recycle-gang.drawio)
 
